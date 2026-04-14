@@ -28,7 +28,7 @@ const CustomTooltip = ({ active, payload, label, mode }) => {
   return null
 }
 
-export function NpsTrendChart({ mode = 'nsat' }) {
+export function NpsTrendChart({ mode = 'nps' }) {
   const isCsat = mode === 'csat'
 
   return (
@@ -44,17 +44,17 @@ export function NpsTrendChart({ mode = 'nsat' }) {
             <stop offset="95%" stopColor="#25A28F" stopOpacity={0} />
           </linearGradient>
         </defs>
-        <CartesianGrid strokeDasharray="3 3" stroke="#f1f1f1" vertical={false} />
+        <CartesianGrid strokeDasharray="3 3" stroke="#D5E7E7" vertical={false} />
         <XAxis
           dataKey="month"
           axisLine={false}
           tickLine={false}
-          tick={{ fontSize: 11, fill: '#9ca3af', fontFamily: 'Karla' }}
+          tick={{ fontSize: 11, fill: '#86A1A1', fontFamily: 'Karla' }}
         />
         <YAxis
           axisLine={false}
           tickLine={false}
-          tick={{ fontSize: 11, fill: '#9ca3af', fontFamily: 'Karla' }}
+          tick={{ fontSize: 11, fill: '#86A1A1', fontFamily: 'Karla' }}
           domain={isCsat ? [60, 100] : [40, 90]}
           tickFormatter={isCsat ? (v) => `${v}%` : undefined}
         />

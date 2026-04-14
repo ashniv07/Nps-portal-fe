@@ -47,7 +47,7 @@ export function InsightModal({ isOpen, onClose, type }) {
     passives: {
       title: 'Passives Breakdown',
       data: promoterBreakdown.passives,
-      color: '#F5A623',
+      color: '#FFBB1C',
     },
     detractors: {
       title: 'Detractors Breakdown',

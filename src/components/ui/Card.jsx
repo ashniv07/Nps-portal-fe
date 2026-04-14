@@ -3,7 +3,7 @@ import { clsx } from 'clsx'
 
 export function Card({ children, className, onClick, hover = true, ...props }) {
   const base =
-    'bg-white rounded-xl shadow-card border border-gray-100/60 overflow-hidden'
+    'bg-white rounded-[2px] shadow-card border border-gray-100/60 overflow-hidden'
 
   if (onClick || hover) {
     return (

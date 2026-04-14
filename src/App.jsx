@@ -6,6 +6,7 @@ import { Navbar } from './components/layout/Navbar'
 import { AnalyticsTab } from './components/tabs/AnalyticsTab'
 import { SurveyTab } from './components/tabs/SurveyTab'
 import { HistoryTab } from './components/tabs/HistoryTab'
+import { ClientAccessTab } from './components/tabs/ClientAccessTab'
 import { SkeletonCard } from './components/ui/Skeleton'
 import LoginPage from './pages/LoginPage'
 
@@ -39,7 +40,8 @@ function LoadingState() {
 function Dashboard() {
   const [activeTab, setActiveTab] = useState('analytics')
   const [loading, setLoading] = useState(true)
-  const [surveyType, setSurveyType] = useState('nsat')
+  const [surveyType, setSurveyType] = useState('nps')
+  const [role] = useState(() => localStorage.getItem('cprime_role') || 'admin')
 
   useEffect(() => {
     const t = setTimeout(() => setLoading(false), 1200)
@@ -52,11 +54,9 @@ function Dashboard() {
     setTimeout(() => setLoading(false), 600)
   }
 
-  const bgColor = surveyType === 'nsat' ? '#FAFAF4' : '#EEF5F3'
-
   return (
-    <div className="min-h-screen font-body transition-colors duration-500" style={{ backgroundColor: bgColor }}>
-      <Sidebar activeTab={activeTab} onTabChange={handleTabChange} surveyType={surveyType} />
+    <div className="min-h-screen font-body bg-gray-50 transition-colors duration-500">
+      <Sidebar activeTab={activeTab} onTabChange={handleTabChange} surveyType={surveyType} role={role} />
       <Navbar activeTab={activeTab} surveyType={surveyType} onSurveyTypeChange={setSurveyType} />
 
       <main className="ml-72 pt-20 min-h-screen">
@@ -82,6 +82,7 @@ function Dashboard() {
                 {activeTab === 'analytics' && <AnalyticsTab surveyType={surveyType} />}
                 {activeTab === 'survey' && <SurveyTab surveyType={surveyType} />}
                 {activeTab === 'history' && <HistoryTab surveyType={surveyType} />}
+                {activeTab === 'client-access' && <ClientAccessTab />}
               </motion.div>
             )}
           </AnimatePresence>

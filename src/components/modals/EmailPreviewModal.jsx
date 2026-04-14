@@ -1,9 +1,10 @@
 import { useState } from 'react'
 import { Modal } from '../ui/Modal'
 import { Button } from '../ui/Button'
-import { Star, Mail, Pencil, Check, X } from 'lucide-react'
+import { Mail, Pencil, Check, X } from 'lucide-react'
+import { CPrimeLogo } from '../common/CPrimeLogo'
 
-export function EmailPreviewModal({ isOpen, onClose, client, surveyType = 'nsat' }) {
+export function EmailPreviewModal({ isOpen, onClose, client, surveyType = 'nps' }) {
   const [isEditing, setIsEditing] = useState(false)
   const [editSubject, setEditSubject] = useState('')
   const [editGreeting, setEditGreeting] = useState('')
@@ -101,11 +102,11 @@ export function EmailPreviewModal({ isOpen, onClose, client, surveyType = 'nsat'
 
           <div className="px-6 pb-6 pt-3 space-y-5">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-gradient-neon flex items-center justify-center shadow-neon">
-                <Star size={16} className="text-black fill-black" />
+              <div className="p-2 bg-white border border-gray-200 rounded-[2px]">
+                <CPrimeLogo size="sm" showText={false} link={false} />
               </div>
               <div>
-                <p className="font-display font-semibold text-gray-900">PulseScore</p>
+                <p className="font-display font-semibold text-gray-600">CPRIME</p>
                 <p className="text-xs text-gray-400 font-body">Customer Feedback</p>
               </div>
             </div>
@@ -194,7 +195,7 @@ export function EmailPreviewModal({ isOpen, onClose, client, surveyType = 'nsat'
             </div>
 
             <p className="text-[11px] text-gray-400 font-body text-center pt-2 border-t border-gray-100">
-              You received this email because you are a client of PulseScore Analytics.<br />
+              You received this email because you are a client of CPRIME Analytics.<br />
               <span className="underline cursor-pointer">Unsubscribe</span> · <span className="underline cursor-pointer">Privacy Policy</span>
             </p>
           </div>

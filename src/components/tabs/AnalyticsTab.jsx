@@ -184,7 +184,7 @@ function GlobeClientPanel({ client, surveyType, onClose }) {
   )
 }
 
-export function AnalyticsTab({ surveyType = 'nsat' }) {
+export function AnalyticsTab({ surveyType = 'nps' }) {
   const [modal, setModal] = useState(null)
   const [globeClient, setGlobeClient] = useState(null)
   const isCsat = surveyType === 'csat'
@@ -199,7 +199,7 @@ export function AnalyticsTab({ surveyType = 'nsat' }) {
           {isCsat ? (
             /* ── CSAT HERO ── */
             <Card className="col-span-1 relative overflow-visible" onClick={() => setModal('csat')}>
-              <div className="absolute top-0 right-0 w-32 h-32 bg-teal/8 rounded-full -translate-y-1/2 translate-x-1/2 pointer-events-none" />
+              <div className="absolute top-0 right-0 w-32 h-32 bg-neon/8 rounded-full -translate-y-1/2 translate-x-1/2 pointer-events-none" />
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <div>
@@ -305,7 +305,7 @@ export function AnalyticsTab({ surveyType = 'nsat' }) {
             <Card className="p-5" hover>
               <div className="flex items-center gap-3">
                 <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
-                  isCsat ? 'bg-teal/10 text-teal' : 'bg-neon/15 text-yellow-700'
+                  'bg-neon/10 text-gray-800'
                 }`}>
                   <BarChart2 size={17} />
                 </div>
@@ -355,7 +355,7 @@ export function AnalyticsTab({ surveyType = 'nsat' }) {
                   </div>
                   <div className="flex items-center gap-3 text-xs font-body">
                     <span className="flex items-center gap-1.5">
-                      <span className={`w-3 h-0.5 rounded inline-block ${isCsat ? 'bg-teal-light' : 'bg-teal'}`} />
+                      <span className="w-3 h-0.5 rounded inline-block bg-neon" />
                       <span className="text-gray-500">{isCsat ? 'CSAT %' : 'NPS'}</span>
                     </span>
                   </div>
@@ -429,7 +429,7 @@ export function AnalyticsTab({ surveyType = 'nsat' }) {
               <Card className="border-t-4 border-t-teal" onClick={() => setModal('promoters')}>
                 <CardContent className="pt-5">
                   <div className="flex items-start justify-between mb-3">
-                    <div className="w-10 h-10 rounded-xl bg-teal/10 flex items-center justify-center text-teal">
+                    <div className="w-10 h-10 rounded-xl bg-neon/10 flex items-center justify-center text-gray-800">
                       <SmilePlus size={18} />
                     </div>
                     <ArrowUpRight size={15} className="text-gray-300" />
@@ -438,7 +438,7 @@ export function AnalyticsTab({ surveyType = 'nsat' }) {
                   <p className="font-body font-semibold text-gray-800 mt-1">Satisfied</p>
                   <p className="text-xs text-gray-400 font-body mt-1">Rating 4–5 · Happy clients</p>
                   <div className="mt-3 h-1.5 rounded-full bg-gray-100">
-                    <div className="h-1.5 rounded-full bg-teal" style={{ width: `${csatSatisfied}%` }} />
+                    <div className="h-1.5 rounded-full bg-neon" style={{ width: `${csatSatisfied}%` }} />
                   </div>
                 </CardContent>
               </Card>
@@ -539,11 +539,11 @@ export function AnalyticsTab({ surveyType = 'nsat' }) {
           <div className="rounded-2xl border border-gray-100 shadow-card overflow-hidden">
             <div className="flex" style={{ minHeight: '480px' }}>
 
-              {/* Dark globe panel */}
-              <div className="bg-gray-950 flex flex-col" style={{ width: '58%' }}>
+              {/* Globe panel */}
+              <div className="bg-gray-50 flex flex-col border-r border-gray-100" style={{ width: '58%' }}>
                 <div className="px-7 pt-6 pb-3">
-                  <h3 className="font-display font-semibold text-white text-lg">Global Client Map</h3>
-                  <p className="text-xs text-gray-500 font-body mt-0.5">
+                  <h3 className="font-display font-semibold text-gray-600 text-lg">Global Client Map</h3>
+                  <p className="text-xs text-gray-400 font-body mt-0.5">
                     Spinning · Click a pin to explore client details
                   </p>
                 </div>
@@ -560,8 +560,8 @@ export function AnalyticsTab({ surveyType = 'nsat' }) {
                 {/* Legend */}
                 <div className="px-7 pb-5 flex items-center gap-5">
                   {[
-                    { color: 'bg-teal', label: isCsat ? 'Satisfied (4–5★)' : 'Promoter (9–10)' },
-                    { color: 'bg-neon', label: isCsat ? 'Neutral (3★)' : 'Passive (7–8)' },
+                    { color: 'bg-neon', label: isCsat ? 'Satisfied (4–5★)' : 'Promoter (9–10)' },
+                    { color: 'bg-orange-300', label: isCsat ? 'Neutral (3★)' : 'Passive (7–8)' },
                     { color: 'bg-rose-500', label: isCsat ? 'Dissatisfied (1–2★)' : 'Detractor (0–6)' },
                     { color: 'bg-gray-500', label: 'Pending' },
                   ].map(({ color, label }) => (
@@ -584,10 +584,10 @@ export function AnalyticsTab({ surveyType = 'nsat' }) {
                 ) : (
                   <div className="h-full flex flex-col items-center justify-center text-center">
                     <div className="w-16 h-16 rounded-2xl bg-gray-100 flex items-center justify-center mb-4">
-                      <MapPin size={26} className="text-gray-300" />
+                      <MapPin size={26} className="text-gray-400" />
                     </div>
                     <p className="font-display font-semibold text-gray-400 text-lg">No client selected</p>
-                    <p className="text-sm text-gray-300 font-body mt-1.5 max-w-xs">
+                    <p className="text-sm text-gray-500 font-body mt-1.5 max-w-xs">
                       Click any glowing pin on the globe to view that client's profile and survey results
                     </p>
                     <div className="mt-6 grid grid-cols-2 gap-2 w-full max-w-xs">
@@ -595,7 +595,7 @@ export function AnalyticsTab({ surveyType = 'nsat' }) {
                         <button
                           key={c.id}
                           onClick={() => setGlobeClient(c)}
-                          className="flex items-center gap-2 p-2.5 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors text-left"
+                          className="flex items-center gap-2 p-2.5 rounded-[2px] bg-gray-50 hover:bg-gray-100 transition-colors text-left"
                         >
                           <div className="w-7 h-7 rounded-full bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center text-[10px] font-bold text-gray-600 shrink-0">
                             {c.name.split(' ').map(n => n[0]).join('')}
