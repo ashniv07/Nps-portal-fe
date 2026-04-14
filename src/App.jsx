@@ -9,6 +9,7 @@ import { HistoryTab } from './components/tabs/HistoryTab'
 import { ClientAccessTab } from './components/tabs/ClientAccessTab'
 import { SkeletonCard } from './components/ui/Skeleton'
 import LoginPage from './pages/LoginPage'
+import ClientSurveyPage from './pages/ClientSurveyPage'
 
 const pageVariants = {
   initial: { opacity: 0, y: 12 },
@@ -42,6 +43,11 @@ function Dashboard() {
   const [loading, setLoading] = useState(true)
   const [surveyType, setSurveyType] = useState('nps')
   const [role] = useState(() => localStorage.getItem('cprime_role') || 'admin')
+
+  // Redirect users to client survey page
+  if (role !== 'admin') {
+    return <Navigate to="/survey" replace />
+  }
 
   useEffect(() => {
     const t = setTimeout(() => setLoading(false), 1200)
@@ -98,6 +104,7 @@ export default function App() {
       <Route path="/" element={<Navigate to="/login" replace />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/dashboard" element={<Dashboard />} />
+      <Route path="/survey" element={<ClientSurveyPage />} />
       <Route path="*" element={<Navigate to="/login" replace />} />
     </Routes>
   )
