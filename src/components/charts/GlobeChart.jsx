@@ -2,11 +2,11 @@ import { useRef, useEffect, useState } from 'react'
 import Globe from 'react-globe.gl'
 
 function getPinColor(client, surveyType) {
-  if (client.status !== 'Responded') return '#6b7280'
+  if (client.status !== 'Responded') return '#D5E7E7'  // Neutral gray from design system
   if (surveyType === 'csat') {
-    return client.csat >= 4 ? '#0F7E6D' : client.csat >= 3 ? '#CDDE33' : '#ef4444'
+    return client.csat >= 4 ? '#25A28F' : client.csat >= 3 ? '#CDDE33' : '#731A42'  // Turquoise 3 for positive, Neon for neutral, Magenta for negative
   }
-  return client.nps >= 9 ? '#0F7E6D' : client.nps >= 7 ? '#CDDE33' : '#ef4444'
+  return client.nps >= 9 ? '#25A28F' : client.nps >= 7 ? '#CDDE33' : '#731A42'
 }
 
 export function GlobeChart({ clients, surveyType, onClientSelect, selectedClient }) {
@@ -61,30 +61,30 @@ export function GlobeChart({ clients, surveyType, onClientSelect, selectedClient
     `
 
     const pin = document.createElement('div')
-    const size = d.isSelected ? 18 : 11
+    const size = d.isSelected ? 14 : 8
     pin.style.cssText = `
       width: ${size}px;
       height: ${size}px;
       border-radius: 50%;
       background: ${d.color};
-      border: ${d.isSelected ? '2.5px solid #CDDE33' : '2px solid rgba(255,255,255,0.85)'};
+      border: ${d.isSelected ? '2px solid #CDDE33' : 'none'};
       box-shadow: ${d.isSelected
-        ? `0 0 0 3px rgba(205,222,51,0.35), 0 0 14px ${d.color}`
-        : `0 1px 6px ${d.color}80`};
+        ? `0 0 0 2px rgba(205,222,51,0.4), 0 2px 8px rgba(0,0,0,0.12)`
+        : `0 1px 4px rgba(0,0,0,0.08)`};
       transition: transform 0.15s ease, box-shadow 0.15s ease;
     `
 
-    // Pulse ring for selected
+    // Subtle pulse ring for selected
     if (d.isSelected) {
       const ring = document.createElement('div')
       ring.style.cssText = `
         position: absolute;
-        width: 28px;
-        height: 28px;
+        width: 24px;
+        height: 24px;
         border-radius: 50%;
-        border: 1.5px solid #CDDE33;
-        opacity: 0.5;
-        animation: pulse 1.8s ease-out infinite;
+        border: 1.2px solid #CDDE33;
+        opacity: 0.3;
+        animation: pulse 2s ease-out infinite;
         pointer-events: none;
       `
       outer.appendChild(ring)
@@ -93,14 +93,14 @@ export function GlobeChart({ clients, surveyType, onClientSelect, selectedClient
     outer.appendChild(pin)
 
     outer.addEventListener('mouseenter', () => {
-      pin.style.transform = 'scale(1.55)'
-      pin.style.boxShadow = `0 0 12px ${d.color}`
+      pin.style.transform = 'scale(1.5)'
+      pin.style.boxShadow = `0 2px 8px rgba(0,0,0,0.15)`
     })
     outer.addEventListener('mouseleave', () => {
       pin.style.transform = 'scale(1)'
       pin.style.boxShadow = d.isSelected
-        ? `0 0 0 3px rgba(205,222,51,0.35), 0 0 14px ${d.color}`
-        : `0 1px 6px ${d.color}80`
+        ? `0 0 0 2px rgba(205,222,51,0.4), 0 2px 8px rgba(0,0,0,0.12)`
+        : `0 1px 4px rgba(0,0,0,0.08)`
     })
     outer.addEventListener('click', (e) => {
       e.stopPropagation()
@@ -117,20 +117,20 @@ export function GlobeChart({ clients, surveyType, onClientSelect, selectedClient
     <>
       <style>{`
         @keyframes pulse {
-          0% { transform: scale(0.8); opacity: 0.6; }
-          100% { transform: scale(2.2); opacity: 0; }
+          0% { transform: scale(1); opacity: 0.4; }
+          100% { transform: scale(2.0); opacity: 0; }
         }
       `}</style>
-      <div ref={containerRef} className="w-full" style={{ height: HEIGHT }}>
+      <div ref={containerRef} className="w-full" style={{ height: HEIGHT, backgroundColor: 'transparent' }}>
         {width > 0 && (
           <Globe
             ref={globeRef}
             width={width}
             height={HEIGHT}
-            globeImageUrl="//unpkg.com/three-globe/example/img/earth-night.jpg"
+            globeImageUrl="//unpkg.com/three-globe/example/img/earth-day.jpg"
             backgroundColor="rgba(0,0,0,0)"
-            atmosphereColor="#CDDE33"
-            atmosphereAltitude={0.12}
+            atmosphereColor="#D5E7E7"
+            atmosphereAltitude={0.1}
             htmlElementsData={markers}
             htmlLat="lat"
             htmlLng="lng"

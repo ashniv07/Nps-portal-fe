@@ -73,7 +73,7 @@ function RespondentRow({ respondent, surveyType, isSelected, onClick }) {
       className={`flex items-start gap-3 p-3 rounded-xl cursor-pointer transition-all duration-150 group ${
         isSelected
           ? isCsat
-            ? 'bg-teal/8 ring-1 ring-teal/30'
+            ? 'bg-neon/8 ring-1 ring-neon/30'
             : 'bg-neon/8 ring-1 ring-neon/30'
           : 'hover:bg-gray-50'
       }`}
@@ -82,7 +82,7 @@ function RespondentRow({ respondent, surveyType, isSelected, onClick }) {
       <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold shrink-0 ${
         responded
           ? isCsat
-            ? 'bg-teal/15 text-teal'
+            ? 'bg-neon/15 text-gray-800'
             : 'bg-neon/20 text-gray-800'
           : 'bg-gray-100 text-gray-400'
       }`}>
@@ -119,10 +119,10 @@ function RespondentRow({ respondent, surveyType, isSelected, onClick }) {
             ? respondent.csat && <CsatStars score={respondent.csat} />
             : respondent.nps != null && <NpsChip score={respondent.nps} />
         ) : (
-          <span className="text-xs text-gray-300 font-body">—</span>
+          <span className="text-xs text-gray-400 font-body">—</span>
         )}
         {respondent.date && (
-          <span className="text-[10px] text-gray-300 font-body">
+          <span className="text-[10px] text-gray-400 font-body">
             {new Date(respondent.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
           </span>
         )}
@@ -172,7 +172,7 @@ function DetailPanel({ survey, client, selectedRespondent, onClose, surveyType }
 
         {/* Score hero */}
         <div className={`text-center p-5 rounded-2xl text-white relative overflow-hidden ${
-          isCsat ? 'bg-gradient-to-br from-teal to-teal-light' : 'bg-gradient-to-br from-gray-900 to-gray-800'
+          'bg-gradient-to-br from-neon to-yellow-300 text-black'
         }`}>
           <div className="absolute inset-0 opacity-10" style={{
             background: isCsat
@@ -237,11 +237,11 @@ function DetailPanel({ survey, client, selectedRespondent, onClose, surveyType }
           <div>
             <h4 className="font-display font-semibold text-gray-800 mb-3 text-sm">Spotlight Response</h4>
             <div className={`p-4 rounded-xl border ${
-              isCsat ? 'border-teal/20 bg-teal/5' : 'border-neon/20 bg-neon/5'
+              'border-neon/20 bg-neon/5'
             }`}>
               <div className="flex items-start gap-3 mb-3">
                 <div className={`w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold shrink-0 ${
-                  isCsat ? 'bg-teal/20 text-teal' : 'bg-neon/30 text-gray-800'
+                  'bg-neon/20 text-gray-800'
                 }`}>
                   {initials(selectedRespondent.name)}
                 </div>
@@ -249,7 +249,7 @@ function DetailPanel({ survey, client, selectedRespondent, onClose, surveyType }
                   <p className="text-sm font-semibold text-gray-800 font-body">{selectedRespondent.name}</p>
                   <p className="text-xs text-gray-500 font-body">{selectedRespondent.role} · {client.company}</p>
                   <div className="flex items-center gap-1.5 mt-1">
-                    <Mail size={10} className="text-gray-300" />
+                    <Mail size={10} className="text-gray-400" />
                     <span className="text-xs text-gray-400 font-body">{selectedRespondent.email}</span>
                   </div>
                 </div>
@@ -266,7 +266,7 @@ function DetailPanel({ survey, client, selectedRespondent, onClose, surveyType }
                 </p>
               )}
               {selectedRespondent.date && (
-                <p className="text-xs text-gray-300 font-body mt-2">
+                <p className="text-xs text-gray-400 font-body mt-2">
                   {new Date(selectedRespondent.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
                 </p>
               )}
@@ -319,7 +319,7 @@ function SurveyCard({ survey, client, surveyType, isSelected, onSelect, expanded
       >
         {/* Status band */}
         <div className={`w-1 h-14 rounded-full shrink-0 ${
-          survey.status === 'Active' ? 'bg-teal' : 'bg-gray-200'
+          survey.status === 'Active' ? 'bg-neon' : 'bg-gray-200'
         }`} />
 
         {/* Company avatar */}
@@ -380,7 +380,7 @@ function SurveyCard({ survey, client, surveyType, isSelected, onSelect, expanded
             onClick={(e) => { e.stopPropagation(); setRespondentsOpen((p) => !p) }}
             className={`w-full flex items-center gap-2 px-5 py-2.5 text-xs font-body font-medium transition-colors ${
               respondentsOpen
-                ? isCsat ? 'text-teal bg-teal/5' : 'text-yellow-700 bg-neon/5'
+                ? 'text-gray-800 bg-neon/5'
                 : 'text-gray-400 hover:text-gray-600 hover:bg-gray-50'
             }`}
           >
@@ -425,7 +425,7 @@ function SurveyCard({ survey, client, surveyType, isSelected, onSelect, expanded
 }
 
 // ─── Main tab ────────────────────────────────────────────────────────────────
-export function HistoryTab({ surveyType = 'nsat' }) {
+export function HistoryTab({ surveyType = 'nps' }) {
   const [selected, setSelected] = useState(null)        // selected survey
   const [selectedRespondent, setSelectedRespondent] = useState(null)
   const [dateFrom, setDateFrom] = useState('')
@@ -485,7 +485,7 @@ export function HistoryTab({ surveyType = 'nsat' }) {
             onClick={() => setShowFilters((p) => !p)}
             className={`flex items-center gap-2 px-4 py-2.5 rounded-xl border text-sm font-body transition-all ${
               showFilters || hasFilters
-                ? isCsat ? 'border-teal/60 text-teal bg-teal/10' : 'border-neon/60 text-yellow-700 bg-neon/10'
+                ? 'border-neon/60 text-gray-800 bg-neon/10'
                 : 'border-gray-200 text-gray-600 hover:bg-gray-50'
             }`}
           >
@@ -493,7 +493,7 @@ export function HistoryTab({ surveyType = 'nsat' }) {
             Filters
             {hasFilters && (
               <span className={`w-4 h-4 rounded-full text-[10px] font-bold flex items-center justify-center ${
-                isCsat ? 'bg-teal text-white' : 'bg-neon text-black'
+                'bg-neon text-black'
               }`}>
                 {[dateFrom, dateTo, scoreMin, scoreMax].filter(Boolean).length}
               </span>
@@ -555,7 +555,7 @@ export function HistoryTab({ surveyType = 'nsat' }) {
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="py-16 text-center">
                 <Calendar size={44} className="text-gray-200 mx-auto mb-3" />
                 <p className="font-display font-semibold text-gray-400 text-lg">No campaigns found</p>
-                <p className="text-sm text-gray-300 font-body mt-1">Try adjusting your filters</p>
+                <p className="text-sm text-gray-500 font-body mt-1">Try adjusting your filters</p>
               </motion.div>
             ) : (
               filtered.map((survey) => (

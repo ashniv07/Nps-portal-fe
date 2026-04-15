@@ -32,17 +32,17 @@ export function CsatBarChart() {
         margin={{ top: 10, right: 10, left: -10, bottom: 0 }}
         barSize={28}
       >
-        <CartesianGrid strokeDasharray="3 3" stroke="#f1f1f1" vertical={false} />
+        <CartesianGrid strokeDasharray="3 3" stroke="#D5E7E7" vertical={false} />
         <XAxis
           dataKey="label"
           axisLine={false}
           tickLine={false}
-          tick={{ fontSize: 11, fill: '#9ca3af', fontFamily: 'Karla' }}
+          tick={{ fontSize: 11, fill: '#86A1A1', fontFamily: 'Karla' }}
         />
         <YAxis
           axisLine={false}
           tickLine={false}
-          tick={{ fontSize: 11, fill: '#9ca3af', fontFamily: 'Karla' }}
+          tick={{ fontSize: 11, fill: '#86A1A1', fontFamily: 'Karla' }}
           domain={[0, 50]}
           tickFormatter={(v) => `${v}%`}
         />

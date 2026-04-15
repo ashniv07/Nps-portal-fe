@@ -121,7 +121,7 @@ function FileDropzone({ onFile }) {
   )
 }
 
-export function SurveyTab({ surveyType = 'nsat' }) {
+export function SurveyTab({ surveyType = 'nps' }) {
   const [search, setSearch] = useState('')
   const [selected, setSelected] = useState([])
   const [previewClient, setPreviewClient] = useState(null)

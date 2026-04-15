@@ -8,7 +8,7 @@ const notifications = [
   { id: 3, text: 'Monthly report is ready for download', time: '3h ago', unread: false },
 ]
 
-export function Navbar({ activeTab, surveyType = 'nsat', onSurveyTypeChange }) {
+export function Navbar({ activeTab, surveyType = 'nps', onSurveyTypeChange }) {
   const [notifOpen, setNotifOpen] = useState(false)
   const [profileOpen, setProfileOpen] = useState(false)
   const profileRef = useRef(null)
@@ -20,6 +20,7 @@ export function Navbar({ activeTab, surveyType = 'nsat', onSurveyTypeChange }) {
     analytics: 'Analytics Overview',
     survey: 'Survey Management',
     history: 'Survey History',
+    'client-access': 'Client Access',
   }
 
   // Close dropdowns on outside click
@@ -47,25 +48,27 @@ export function Navbar({ activeTab, surveyType = 'nsat', onSurveyTypeChange }) {
       {/* Right */}
       <div className="flex items-center gap-4">
 
-        {/* NSAT / CSAT Toggle */}
-        <div className="flex items-center bg-gray-100 rounded-xl p-1 gap-1">
-          <button
-            onClick={() => onSurveyTypeChange('nsat')}
-            className={`relative px-5 py-2 rounded-lg text-sm font-body font-semibold transition-all duration-250 ${
-              !isCsat ? 'bg-gray-900 text-neon shadow-sm' : 'text-gray-500 hover:text-gray-700'
-            }`}
-          >
-            NSAT
-          </button>
-          <button
-            onClick={() => onSurveyTypeChange('csat')}
-            className={`relative px-5 py-2 rounded-lg text-sm font-body font-semibold transition-all duration-250 ${
-              isCsat ? 'bg-teal text-white shadow-sm' : 'text-gray-500 hover:text-gray-700'
-            }`}
-          >
-            CSAT
-          </button>
-        </div>
+        {/* NPS / CSAT Toggle - Only show on Analytics tab */}
+        {activeTab === 'analytics' && (
+          <div className="flex items-center bg-gray-100 rounded-[2px] p-1 gap-1 border border-gray-200">
+            <button
+              onClick={() => onSurveyTypeChange('nps')}
+              className={`relative px-5 py-2 rounded-[2px] text-sm font-body font-semibold transition-all duration-250 ${
+                surveyType !== 'csat' ? 'bg-neon text-black shadow-sm' : 'text-gray-500 hover:text-gray-700'
+              }`}
+            >
+              NPS
+            </button>
+            <button
+              onClick={() => onSurveyTypeChange('csat')}
+              className={`relative px-5 py-2 rounded-[2px] text-sm font-body font-semibold transition-all duration-250 ${
+                surveyType === 'csat' ? 'bg-neon text-black shadow-sm' : 'text-gray-500 hover:text-gray-700'
+              }`}
+            >
+              CSAT
+            </button>
+          </div>
+        )}
 
         {/* Search */}
         <div className="relative">
@@ -73,7 +76,7 @@ export function Navbar({ activeTab, surveyType = 'nsat', onSurveyTypeChange }) {
           <input
             type="text"
             placeholder="Search..."
-            className="pl-9 pr-4 py-2.5 rounded-xl border border-gray-200 text-sm font-body bg-gray-50 focus:outline-none focus:ring-2 focus:ring-neon/30 focus:border-neon/60 w-48 transition-all"
+            className="pl-9 pr-4 py-2.5 rounded-[2px] border border-gray-200 text-sm font-body bg-gray-50 focus:outline-none focus:ring-2 focus:ring-neon/30 focus:border-neon/60 w-48 transition-all"
           />
         </div>
 
@@ -81,7 +84,7 @@ export function Navbar({ activeTab, surveyType = 'nsat', onSurveyTypeChange }) {
         <div className="relative" ref={notifRef}>
           <button
             onClick={() => { setNotifOpen((p) => !p); setProfileOpen(false) }}
-            className="relative p-2.5 rounded-xl hover:bg-gray-100 transition-colors text-gray-600"
+            className="relative p-2.5 rounded-[2px] hover:bg-gray-100 transition-colors text-gray-600"
           >
             <Bell size={20} />
             {unread > 0 && (
@@ -98,7 +101,7 @@ export function Navbar({ activeTab, surveyType = 'nsat', onSurveyTypeChange }) {
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: 8, scale: 0.97 }}
                 transition={{ duration: 0.18 }}
-                className="absolute right-0 top-full mt-2 w-84 bg-white rounded-2xl shadow-card-hover border border-gray-100 overflow-hidden z-50"
+                className="absolute right-0 top-full mt-2 w-84 bg-white rounded-[2px] shadow-card-hover border border-gray-100 overflow-hidden z-50"
                 style={{ width: '340px' }}
               >
                 <div className="px-5 py-3.5 border-b border-gray-50 flex items-center justify-between">
@@ -132,7 +135,7 @@ export function Navbar({ activeTab, surveyType = 'nsat', onSurveyTypeChange }) {
         <div className="relative" ref={profileRef}>
           <button
             onClick={() => { setProfileOpen((p) => !p); setNotifOpen(false) }}
-            className="flex items-center gap-3 pl-3 pr-2.5 py-2 rounded-xl hover:bg-gray-100 transition-colors"
+            className="flex items-center gap-3 pl-3 pr-2.5 py-2 rounded-[2px] hover:bg-gray-100 transition-colors"
           >
             <div className="w-9 h-9 rounded-full bg-gradient-neon flex items-center justify-center text-sm font-bold text-black">
               AJ
@@ -154,7 +157,7 @@ export function Navbar({ activeTab, surveyType = 'nsat', onSurveyTypeChange }) {
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: 8, scale: 0.97 }}
                 transition={{ duration: 0.18 }}
-                className="absolute right-0 top-full mt-2 w-56 bg-white rounded-2xl shadow-card-hover border border-gray-100 overflow-hidden z-50"
+                className="absolute right-0 top-full mt-2 w-56 bg-white rounded-[2px] shadow-card-hover border border-gray-100 overflow-hidden z-50"
               >
                 {/* User info */}
                 <div className="px-4 py-4 border-b border-gray-50">

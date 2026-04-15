@@ -28,7 +28,7 @@ export function Modal({ isOpen, onClose, title, children, size = 'md' }) {
             onClick={onClose}
           />
           <motion.div
-            className={`relative bg-white rounded-2xl shadow-2xl w-full ${sizes[size]} max-h-[90vh] overflow-y-auto`}
+            className={`relative bg-white rounded-[2px] shadow-2xl w-full ${sizes[size]} max-h-[90vh] overflow-y-auto`}
             initial={{ opacity: 0, scale: 0.95, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
@@ -38,7 +38,7 @@ export function Modal({ isOpen, onClose, title, children, size = 'md' }) {
               <h2 className="font-display text-xl font-semibold text-gray-900">{title}</h2>
               <button
                 onClick={onClose}
-                className="p-1.5 rounded-lg hover:bg-gray-100 transition-colors text-gray-400 hover:text-gray-600"
+                className="p-1.5 rounded-[2px] hover:bg-gray-100 transition-colors text-gray-400 hover:text-gray-600"
               >
                 <X size={18} />
               </button>

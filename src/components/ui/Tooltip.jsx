@@ -27,7 +27,7 @@ export function Tooltip({ children, content, side = 'top' }) {
             exit={{ opacity: 0, scale: 0.9 }}
             transition={{ duration: 0.15 }}
           >
-            <div className="bg-gray-900 text-white text-xs font-body px-2.5 py-1.5 rounded-lg whitespace-nowrap shadow-lg">
+            <div className="bg-gray-900 text-white text-xs font-body px-2.5 py-1.5 rounded-[2px] whitespace-nowrap shadow-lg">
               {content}
             </div>
           </motion.div>
