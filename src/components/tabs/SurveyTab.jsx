@@ -323,7 +323,6 @@ export function SurveyTab({ surveyType: defaultType = 'nps' }) {
   const [selected, setSelected] = useState([])
   const [previewClient, setPreviewClient] = useState(null)
   const [showSendNow, setShowSendNow] = useState(false)
-  const [sendSuccess, setSendSuccess] = useState(false)
 
   const filtered = clientsData.filter(
     (c) =>
@@ -339,8 +338,6 @@ export function SurveyTab({ surveyType: defaultType = 'nps' }) {
 
   function handleSendNow() {
     setShowSendNow(false)
-    setSendSuccess(true)
-    setTimeout(() => setSendSuccess(false), 3500)
   }
 
   const targetCount = selected.length > 0 ? selected.length : filtered.length
@@ -348,60 +345,6 @@ export function SurveyTab({ surveyType: defaultType = 'nps' }) {
   return (
     <>
       <motion.div variants={container} initial="hidden" animate="show" className="space-y-6">
-
-        {/* ── Global Actions Bar ─────────────────────────────────── */}
-        <motion.div variants={item}>
-          <Card hover={false}>
-            <CardContent>
-              <div className="flex items-center justify-between flex-wrap gap-4">
-                <div>
-                  <h2 className="font-display font-semibold text-gray-900">Survey Actions</h2>
-                  <p className="text-xs text-gray-400 font-body mt-0.5">
-                    Apply globally to all clients or use per-client controls below
-                  </p>
-                </div>
-                <div className="flex items-center gap-3 flex-wrap">
-                  {/* Survey type global selector */}
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs text-gray-500 font-semibold font-body uppercase tracking-wider whitespace-nowrap">Survey Type</span>
-                    <SurveyTypeSelector value={globalSurveyType} onChange={setGlobalSurveyType} />
-                  </div>
-
-                  {/* Send Now */}
-                  <button
-                    onClick={() => setShowSendNow(true)}
-                    className="flex items-center gap-2 h-11 px-5 rounded-[2px] bg-neon text-black text-sm font-semibold font-body hover:bg-yellow-300 transition-colors uppercase tracking-widest"
-                  >
-                    <Play size={14} />
-                    Send Now
-                  </button>
-                </div>
-              </div>
-
-              {/* Success banner */}
-              <AnimatePresence>
-                {sendSuccess && (
-                  <motion.div
-                    initial={{ opacity: 0, y: -6 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -6 }}
-                    className="mt-4 flex items-center gap-2.5 px-4 py-3 rounded-lg bg-emerald-50 border border-emerald-200"
-                  >
-                    <CheckCircle2 size={16} className="text-emerald-600" />
-                    <p className="text-sm text-emerald-700 font-body font-medium">
-                      {globalSurveyType} survey sent to {targetCount} client{targetCount !== 1 ? 's' : ''} successfully.
-                    </p>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </CardContent>
-          </Card>
-        </motion.div>
-
-        {/* ── Schedule Panel ─────────────────────────────────────── */}
-        <motion.div variants={item}>
-          <SchedulePanel globalSurveyType={globalSurveyType} />
-        </motion.div>
 
         {/* ── Import Contacts ────────────────────────────────────── */}
         <motion.div variants={item}>
@@ -430,6 +373,11 @@ export function SurveyTab({ surveyType: defaultType = 'nps' }) {
               </div>
             </CardContent>
           </Card>
+        </motion.div>
+
+        {/* ── Schedule Panel ─────────────────────────────────────── */}
+        <motion.div variants={item}>
+          <SchedulePanel globalSurveyType={globalSurveyType} />
         </motion.div>
 
         {/* ── Client List ────────────────────────────────────────── */}
@@ -482,7 +430,7 @@ export function SurveyTab({ surveyType: defaultType = 'nps' }) {
                         className="rounded accent-gray-900 w-3.5 h-3.5 cursor-pointer"
                       />
                     </th>
-                    {['Name', 'Email', 'Company', 'Status', 'Survey Type', 'Actions'].map((h) => (
+                    {['Name', 'Email', 'Company', 'Status', 'Actions'].map((h) => (
                       <th key={h} className="pb-3 pr-4 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider font-body">
                         {h}
                       </th>
@@ -493,7 +441,7 @@ export function SurveyTab({ surveyType: defaultType = 'nps' }) {
                   <AnimatePresence>
                     {filtered.length === 0 ? (
                       <tr>
-                        <td colSpan={7} className="py-12 text-center">
+                        <td colSpan={6} className="py-12 text-center">
                           <div className="flex flex-col items-center gap-2">
                             <Search size={28} className="text-gray-200" />
                             <p className="text-sm text-gray-400 font-body">No clients match your search</p>
@@ -536,10 +484,6 @@ export function SurveyTab({ surveyType: defaultType = 'nps' }) {
                           </td>
                           <td className="py-3.5 pr-4">
                             <StatusBadge status={client.status} />
-                          </td>
-                          {/* Per-client survey type selector */}
-                          <td className="py-3.5 pr-4">
-                            <SurveyTypeSelector value={globalSurveyType} onChange={setGlobalSurveyType} size="sm" />
                           </td>
                           <td className="py-3.5">
                             <div className="flex items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">

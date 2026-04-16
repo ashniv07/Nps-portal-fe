@@ -60,6 +60,173 @@ export const promoterBreakdown = {
   ],
 }
 
+// ─── Widget 1 Drill-down data ────────────────────────────────────────────────
+export const drillDownData = {
+  promoters: {
+    themes: [
+      { text: 'Excellent Support', sentiment: 'positive', count: 234, impact: '+12pts' },
+      { text: 'Fast Resolution', sentiment: 'positive', count: 189, impact: '+9pts' },
+      { text: 'User-friendly Interface', sentiment: 'positive', count: 156, impact: '+7pts' },
+      { text: 'Great Value for Money', sentiment: 'positive', count: 143, impact: '+6pts' },
+    ],
+    causal: [
+      { factor: 'Support quality improved 18%', direction: 'up', pts: 8 },
+      { factor: 'New onboarding programme launched', direction: 'up', pts: 5 },
+      { factor: 'UI redesign well received by clients', direction: 'up', pts: 4 },
+    ],
+    clusters: [
+      { name: 'Support Excellence', score: 9.2, responses: 423, change: +1.4 },
+      { name: 'Product Quality', score: 8.7, responses: 312, change: +0.8 },
+      { name: 'Ease of Use', score: 8.9, responses: 289, change: +1.1 },
+    ],
+    accounts: [
+      { name: 'TechCorp Solutions', nps: 9.0, csat: 5.0, city: 'San Francisco', respondents: 3, yoy: +14 },
+      { name: 'Creative Studio', nps: 8.9, csat: 4.8, city: 'Barcelona', respondents: 4, yoy: +22 },
+      { name: 'Enterprise Corp', nps: 8.5, csat: 4.5, city: 'Seoul', respondents: 3, yoy: +9 },
+      { name: 'Deutsch Analytics', nps: 8.0, csat: 4.0, city: 'Berlin', respondents: 3, yoy: +11 },
+    ],
+  },
+  passives: {
+    themes: [
+      { text: 'Good but room to improve', sentiment: 'neutral', count: 198, impact: '±0pts' },
+      { text: 'Neutral overall experience', sentiment: 'neutral', count: 162, impact: '±0pts' },
+      { text: 'Slow response time', sentiment: 'negative', count: 67, impact: '-4pts' },
+      { text: 'Export limitations', sentiment: 'negative', count: 54, impact: '-2pts' },
+    ],
+    causal: [
+      { factor: 'Response time improvement stalled', direction: 'down', pts: 3 },
+      { factor: 'Feature gaps noted vs competitors', direction: 'down', pts: 2 },
+      { factor: 'Pricing satisfaction remained stable', direction: 'up', pts: 3 },
+    ],
+    clusters: [
+      { name: 'Response Time', score: 6.8, responses: 267, change: -0.4 },
+      { name: 'Feature Completeness', score: 7.1, responses: 198, change: +0.2 },
+      { name: 'Pricing Value', score: 7.5, responses: 156, change: +0.6 },
+    ],
+    accounts: [
+      { name: 'Innovate Co.', nps: 7.5, csat: 4.2, city: 'New York', respondents: 3, yoy: -3 },
+      { name: 'Global Bank Ltd', nps: 7.0, csat: 3.7, city: 'London', respondents: 3, yoy: +8 },
+    ],
+  },
+  detractors: {
+    themes: [
+      { text: 'Slow response time', sentiment: 'negative', count: 67, impact: '-8pts' },
+      { text: 'Billing confusion', sentiment: 'negative', count: 53, impact: '-6pts' },
+      { text: 'Missing key features', sentiment: 'negative', count: 46, impact: '-5pts' },
+      { text: 'Onboarding complexity', sentiment: 'negative', count: 38, impact: '-4pts' },
+    ],
+    causal: [
+      { factor: 'Billing confusion in Q4 renewals', direction: 'down', pts: 6 },
+      { factor: 'Support backlog Nov–Dec', direction: 'down', pts: 5 },
+      { factor: 'Onboarding delays for new clients', direction: 'down', pts: 4 },
+    ],
+    clusters: [
+      { name: 'Support Response', score: 3.2, responses: 120, change: -1.8 },
+      { name: 'Billing Clarity', score: 3.8, responses: 89, change: -1.2 },
+      { name: 'Onboarding Speed', score: 4.1, responses: 67, change: -0.9 },
+    ],
+    accounts: [
+      { name: 'Retail Plus', nps: 5.5, csat: 3.0, city: 'Lagos', respondents: 3, yoy: +2 },
+      { name: 'Global Bank Ltd', nps: 7.0, csat: 3.7, city: 'London', respondents: 3, yoy: +8 },
+      { name: 'Startup XYZ', nps: 6.0, csat: 4.0, city: 'Dublin', respondents: 2, yoy: +12 },
+    ],
+  },
+}
+
+// ─── Widget 2 — AI Improvement Suggestions ──────────────────────────────────
+export const aiSuggestionsData = [
+  {
+    id: 's1',
+    priority: 'High',
+    category: 'Detractors',
+    area: 'Onboarding',
+    title: 'Streamline Client Onboarding Process',
+    summary: 'Onboarding friction is the #1 driver of detractor sentiment, affecting 23% of low-score responses.',
+    insight: 'Clients consistently cite slow ramp-up times and insufficient initial training. Reducing onboarding to <2 weeks could recover ~6pts NPS based on similar interventions at peer companies.',
+    accounts: ['Global Bank Ltd', 'Retail Plus', 'Startup XYZ'],
+    impact: '+6 NPS',
+    impactType: 'positive',
+  },
+  {
+    id: 's2',
+    priority: 'High',
+    category: 'Passives',
+    area: 'Support',
+    title: 'Improve Tier-1 Support Response Times',
+    summary: 'Response time complaints appear in 18% of passive responses, primarily from mid-market accounts.',
+    insight: 'Passives who rated support interaction highest scored 2.1pts higher on average. Targeting sub-4h first-response SLA could convert ~40% of passives to promoters.',
+    accounts: ['Innovate Co.', 'Deutsch Analytics'],
+    impact: '+4 NPS',
+    impactType: 'positive',
+  },
+  {
+    id: 's3',
+    priority: 'Medium',
+    category: 'Promoters',
+    area: 'Product',
+    title: 'Expand Analytics Export Capabilities',
+    summary: 'Promoters frequently mention export limitations as the one remaining friction point.',
+    insight: 'Adding bulk CSV/PDF export and scheduled reporting could deepen engagement and reduce churn risk among enterprise accounts already highly satisfied with the platform.',
+    accounts: ['TechCorp Solutions', 'Creative Studio', 'Enterprise Corp'],
+    impact: 'Retention +12%',
+    impactType: 'retention',
+  },
+  {
+    id: 's4',
+    priority: 'Medium',
+    category: 'Detractors',
+    area: 'Billing',
+    title: 'Address Billing Transparency Concerns',
+    summary: 'Billing confusion accounts for 15% of detractor responses, concentrated in the Q4 renewal cycle.',
+    insight: 'Proactive billing summaries and a self-service billing portal could reduce complaints by ~60% based on peer benchmarks and direct client feedback during interviews.',
+    accounts: ['Retail Plus', 'Startup XYZ'],
+    impact: '+3 NPS',
+    impactType: 'positive',
+  },
+  {
+    id: 's5',
+    priority: 'Low',
+    category: 'Passives',
+    area: 'Mobile',
+    title: 'Enhance Mobile Dashboard Experience',
+    summary: '12% of passive responses mention limited mobile functionality as a barrier to higher satisfaction.',
+    insight: 'A refreshed mobile UI with offline data access could improve satisfaction scores across field-based users, particularly at Enterprise Corp and Innovate Co.',
+    accounts: ['Enterprise Corp', 'Innovate Co.'],
+    impact: '+2 NPS',
+    impactType: 'positive',
+  },
+]
+
+// ─── Widget 3 — Year-over-Year Comparison ───────────────────────────────────
+export const yoyComparisonData = {
+  quarterly: [
+    { quarter: 'Q1', nps2023: 58, nps2024: 62, csat2023: 76, csat2024: 80 },
+    { quarter: 'Q2', nps2023: 61, nps2024: 66, csat2023: 78, csat2024: 82 },
+    { quarter: 'Q3', nps2023: 64, nps2024: 69, csat2023: 80, csat2024: 84 },
+    { quarter: 'Q4', nps2023: 59, nps2024: 72, csat2023: 77, csat2024: 86 },
+  ],
+  movements: [
+    { account: 'TechCorp Solutions', from: 'Passive',   to: 'Promoter',  npsChange: +14, region: 'North America' },
+    { account: 'Creative Studio',    from: 'Detractor', to: 'Promoter',  npsChange: +22, region: 'Europe' },
+    { account: 'Startup XYZ',        from: 'Passive',   to: 'Promoter',  npsChange: +12, region: 'Europe' },
+    { account: 'Enterprise Corp',    from: 'Passive',   to: 'Promoter',  npsChange:  +9, region: 'Asia Pacific' },
+    { account: 'Global Bank Ltd',    from: 'Detractor', to: 'Passive',   npsChange:  +8, region: 'Europe' },
+    { account: 'Deutsch Analytics',  from: 'Passive',   to: 'Promoter',  npsChange: +11, region: 'Europe' },
+    { account: 'Innovate Co.',       from: 'Promoter',  to: 'Promoter',  npsChange:  -3, region: 'North America' },
+    { account: 'Retail Plus',        from: 'Detractor', to: 'Detractor', npsChange:  +2, region: 'Africa' },
+  ],
+}
+
+// ─── Widget 4 — Action Tracker ───────────────────────────────────────────────
+export const initialActionsData = [
+  { id: 'a1', title: 'Schedule onboarding review call with Global Bank Ltd', account: 'Global Bank Ltd', category: 'Detractors', status: 'Open',        notes: 'James Kalu flagged slow ramp-up. Aim to set call within 2 weeks.',       createdAt: '2024-03-15' },
+  { id: 'a2', title: 'Review support SLA adherence for Innovate Co.',         account: 'Innovate Co.',   category: 'Passives',   status: 'In Progress',  notes: 'Response times exceeding 6h avg. Escalated to support manager.',        createdAt: '2024-03-10' },
+  { id: 'a3', title: 'Send billing transparency summary to Retail Plus',      account: 'Retail Plus',    category: 'Detractors', status: 'Open',        notes: 'Q4 renewal caused confusion. Draft proactive billing summary.',         createdAt: '2024-03-18' },
+  { id: 'a4', title: 'Share export feature roadmap with TechCorp Solutions',  account: 'TechCorp Solutions', category: 'Promoters', status: 'Resolved', notes: 'Shared Q3 export roadmap. Client acknowledged and satisfied.',          createdAt: '2024-02-28' },
+  { id: 'a5', title: 'Mobile UX improvements for Enterprise Corp field team', account: 'Enterprise Corp', category: 'Passives',  status: 'In Progress',  notes: 'Raised with product team. Mobile v2 ETA Q3 2024.',                     createdAt: '2024-03-05' },
+  { id: 'a6', title: 'Conduct QBR with Creative Studio',                      account: 'Creative Studio', category: 'Promoters', status: 'Resolved',   notes: 'QBR completed successfully. Client upgraded to enterprise tier.',        createdAt: '2024-02-15' },
+]
+
 export const clientsData = [
   {
     id: 1,
@@ -536,107 +703,152 @@ export const prospectsData = [
 
 export const historyData = [
   {
-    id: 'SRV-2024-031',
-    clientId: 1,
-    title: 'Q1 2024 Survey',
-    sentDate: '2024-03-01',
-    closedDate: '2024-03-15',
-    totalSent: 245,
-    responses: 178,
-    avgNps: 72,
-    avgCsat: 4.3,
-    status: 'Completed',
-    respondents: [
-      { id: 'r1a', name: 'Sarah Chen', role: 'CTO', email: 'sarah.chen@techcorp.io', nps: 9, csat: 5, status: 'Responded', feedback: 'The platform has transformed how we gather customer insights. Absolutely love the analytics.', date: '2024-03-10T10:32:00Z' },
-      { id: 'r1b', name: 'Alex Park', role: 'Product Manager', email: 'alex.park@techcorp.io', nps: 8, csat: 4, status: 'Responded', feedback: 'Great tool overall. The trend charts are very helpful for our quarterly reviews.', date: '2024-03-11T14:15:00Z' },
-      { id: 'r1c', name: 'Mike Torres', role: 'VP Engineering', email: 'm.torres@techcorp.io', nps: 10, csat: 5, status: 'Responded', feedback: 'Exactly what we needed for tracking satisfaction at scale. Exceptional product.', date: '2024-03-12T09:00:00Z' },
-      { id: 'r1d', name: 'Lisa Wang', role: 'Operations Lead', email: 'lisa.wang@techcorp.io', nps: null, csat: null, status: 'Pending', feedback: null, date: null },
-    ],
-  },
-  {
-    id: 'SRV-2024-022',
-    clientId: 3,
-    title: 'February Check-in',
-    sentDate: '2024-02-14',
-    closedDate: '2024-02-28',
-    totalSent: 189,
-    responses: 134,
-    avgNps: 70,
-    avgCsat: 4.1,
-    status: 'Completed',
-    respondents: [
-      { id: 'r2a', name: 'Priya Sharma', role: 'Head of Digital', email: 'p.sharma@globalbank.com', nps: 7, csat: 4, status: 'Responded', feedback: 'Good overall experience, though the export feature could use some improvements.', date: '2024-02-20T14:20:00Z' },
-      { id: 'r2b', name: 'James Kalu', role: 'IT Director', email: 'j.kalu@globalbank.com', nps: 6, csat: 3, status: 'Responded', feedback: 'Decent platform but onboarding took longer than expected for our team.', date: '2024-02-21T11:05:00Z' },
-      { id: 'r2c', name: 'Sophie Reid', role: 'Project Manager', email: 's.reid@globalbank.com', nps: 8, csat: 4, status: 'Responded', feedback: 'Very useful for campaign tracking. Would love better bulk export options.', date: '2024-02-22T16:30:00Z' },
-    ],
-  },
-  {
-    id: 'SRV-2024-015',
-    clientId: 5,
-    title: 'Post-Launch Survey',
-    sentDate: '2024-02-01',
-    closedDate: '2024-02-14',
-    totalSent: 312,
-    responses: 201,
-    avgNps: 65,
-    avgCsat: 3.9,
-    status: 'Completed',
-    respondents: [
-      { id: 'r3a', name: 'Elena Vasquez', role: 'CEO', email: 'elena@creativestudio.net', nps: 10, csat: 5, status: 'Responded', feedback: 'Exceptional product! The team has been incredibly responsive and features keep getting better.', date: '2024-02-05T16:45:00Z' },
-      { id: 'r3b', name: 'Carlos Mendez', role: 'Art Director', email: 'c.mendez@creativestudio.net', nps: 9, csat: 5, status: 'Responded', feedback: 'The visual analytics dashboard is a game changer for our client presentations.', date: '2024-02-06T10:20:00Z' },
-      { id: 'r3c', name: 'Ana Lima', role: 'Marketing Lead', email: 'a.lima@creativestudio.net', nps: 7, csat: 4, status: 'Responded', feedback: 'Solid tool. The automated survey flows save us a lot of manual work each week.', date: '2024-02-08T13:00:00Z' },
-      { id: 'r3d', name: 'Tom Reeves', role: 'Dev Lead', email: 't.reeves@creativestudio.net', nps: null, csat: null, status: 'Sent', feedback: null, date: null },
-    ],
-  },
-  {
-    id: 'SRV-2024-008',
-    clientId: 8,
-    title: 'Q4 2023 Review',
-    sentDate: '2024-01-10',
-    closedDate: '2024-01-25',
-    totalSent: 278,
-    responses: 189,
-    avgNps: 68,
-    avgCsat: 4.2,
-    status: 'Completed',
-    respondents: [
-      { id: 'r4a', name: 'Thomas Müller', role: 'CEO', email: 't.muller@deutsch.de', nps: 8, csat: 4, status: 'Responded', feedback: 'Very solid platform. The NPS tracking capabilities are exactly what we needed.', date: '2024-01-15T10:55:00Z' },
-      { id: 'r4b', name: 'Hanna Becker', role: 'Data Lead', email: 'h.becker@deutsch.de', nps: 9, csat: 5, status: 'Responded', feedback: 'Excellent segmentation features. Makes it easy to drill down into specific cohorts.', date: '2024-01-16T09:30:00Z' },
-      { id: 'r4c', name: 'Klaus Weber', role: 'IT Manager', email: 'k.weber@deutsch.de', nps: 7, csat: 3, status: 'Responded', feedback: 'Solid experience. Integration with our CRM took some time but works well now.', date: '2024-01-18T14:45:00Z' },
-    ],
-  },
-  {
-    id: 'SRV-2023-048',
-    clientId: 7,
-    title: 'Year-End Pulse',
-    sentDate: '2023-12-15',
-    closedDate: '2023-12-31',
-    totalSent: 420,
-    responses: 267,
-    avgNps: 62,
-    avgCsat: 4.0,
-    status: 'Completed',
-    respondents: [
-      { id: 'r5a', name: 'Amara Okafor', role: 'CEO', email: 'amara@retail.ng', nps: 5, csat: 3, status: 'Responded', feedback: 'Average experience. Had some issues with the onboarding process.', date: '2023-12-18T13:10:00Z' },
-      { id: 'r5b', name: 'Emeka Nwosu', role: 'Sales Manager', email: 'e.nwosu@retail.ng', nps: 6, csat: 3, status: 'Responded', feedback: 'Useful for tracking but the mobile experience needs improvement.', date: '2023-12-19T10:00:00Z' },
-      { id: 'r5c', name: 'Fatima Abdullahi', role: 'Operations Lead', email: 'f.abdullahi@retail.ng', nps: null, csat: null, status: 'Pending', feedback: null, date: null },
-    ],
-  },
-  {
-    id: 'SRV-2024-041',
-    clientId: 6,
+    id: 'CAMP-2024-04',
     title: 'April 2024 Wave',
     sentDate: '2024-04-01',
-    closedDate: null,
+    status: 'Active',
     totalSent: 198,
-    responses: 67,
+    totalResponses: 67,
     avgNps: 74,
     avgCsat: 4.5,
-    status: 'Active',
-    respondents: [
-      { id: 'r6a', name: 'David Kim', role: 'CTO', email: 'd.kim@enterprise.co', nps: null, csat: null, status: 'Sent', feedback: null, date: null },
-      { id: 'r6b', name: 'Ji-Young Park', role: 'Product Lead', email: 'jy.park@enterprise.co', nps: 9, csat: 5, status: 'Responded', feedback: 'One of the best analytics platforms we have used. The CSAT dashboard is brilliant.', date: '2024-04-05T11:20:00Z' },
-      { id: 'r6c', name: 'Min-Jun Lee', role: 'Engineering Manager', email: 'mj.lee@enterprise.co', nps: 8, csat: 4, status: 'Responded', feedback: 'Clean API, easy integration, and the reporting saves our team hours every week.', date: '2024-04-06T09:45:00Z' },
+    clients: [
+      {
+        clientId: 6,
+        company: 'Enterprise Corp',
+        city: 'Seoul',
+        country: 'South Korea',
+        respondents: [
+          { id: 'r6a', name: 'David Kim', role: 'CTO', email: 'd.kim@enterprise.co', nps: null, csat: null, status: 'Sent', feedback: null, date: null },
+          { id: 'r6b', name: 'Ji-Young Park', role: 'Product Lead', email: 'jy.park@enterprise.co', nps: 9, csat: 5, status: 'Responded', feedback: 'One of the best analytics platforms we have used. The CSAT dashboard is brilliant.', date: '2024-04-05T11:20:00Z' },
+          { id: 'r6c', name: 'Min-Jun Lee', role: 'Engineering Manager', email: 'mj.lee@enterprise.co', nps: 8, csat: 4, status: 'Responded', feedback: 'Clean API, easy integration, and the reporting saves our team hours every week.', date: '2024-04-06T09:45:00Z' },
+        ],
+      },
+      {
+        clientId: 2,
+        company: 'Innovate Co.',
+        city: 'New York',
+        country: 'USA',
+        respondents: [
+          { id: 'r7a', name: 'Marcus Williams', role: 'COO', email: 'marcus@innovate.co', nps: null, csat: null, status: 'Sent', feedback: null, date: null },
+          { id: 'r7b', name: 'Rachel Green', role: 'Product Manager', email: 'rachel@innovate.co', nps: 7, csat: 4, status: 'Responded', feedback: 'Great features. Love how intuitive the dashboard is for our team.', date: '2024-04-03T11:20:00Z' },
+          { id: 'r7c', name: 'David Zhang', role: 'Data Analyst', email: 'david@innovate.co', nps: null, csat: null, status: 'Pending', feedback: null, date: null },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'CAMP-2024-03',
+    title: 'Q1 2024 Campaign',
+    sentDate: '2024-03-01',
+    status: 'Completed',
+    totalSent: 634,
+    totalResponses: 512,
+    avgNps: 71,
+    avgCsat: 4.2,
+    clients: [
+      {
+        clientId: 1,
+        company: 'TechCorp Solutions',
+        city: 'San Francisco',
+        country: 'USA',
+        respondents: [
+          { id: 'r1a', name: 'Sarah Chen', role: 'CTO', email: 'sarah.chen@techcorp.io', nps: 9, csat: 5, status: 'Responded', feedback: 'The platform has transformed how we gather customer insights. Absolutely love the analytics.', date: '2024-03-10T10:32:00Z' },
+          { id: 'r1b', name: 'Alex Park', role: 'Product Manager', email: 'alex.park@techcorp.io', nps: 8, csat: 4, status: 'Responded', feedback: 'Great tool overall. The trend charts are very helpful for our quarterly reviews.', date: '2024-03-11T14:15:00Z' },
+          { id: 'r1c', name: 'Mike Torres', role: 'VP Engineering', email: 'm.torres@techcorp.io', nps: 10, csat: 5, status: 'Responded', feedback: 'Exactly what we needed for tracking satisfaction at scale. Exceptional product.', date: '2024-03-12T09:00:00Z' },
+          { id: 'r1d', name: 'Lisa Wang', role: 'Operations Lead', email: 'lisa.wang@techcorp.io', nps: null, csat: null, status: 'Pending', feedback: null, date: null },
+        ],
+      },
+      {
+        clientId: 3,
+        company: 'Global Bank Ltd',
+        city: 'London',
+        country: 'UK',
+        respondents: [
+          { id: 'r2a', name: 'Priya Sharma', role: 'Head of Digital', email: 'p.sharma@globalbank.com', nps: 7, csat: 4, status: 'Responded', feedback: 'Good overall experience, though the export feature could use some improvements.', date: '2024-03-13T14:20:00Z' },
+          { id: 'r2b', name: 'James Kalu', role: 'IT Director', email: 'j.kalu@globalbank.com', nps: 6, csat: 3, status: 'Responded', feedback: 'Decent platform but onboarding took longer than expected for our team.', date: '2024-03-14T11:05:00Z' },
+          { id: 'r2c', name: 'Robert Bennett', role: 'Project Manager', email: 'r.bennett@globalbank.com', nps: null, csat: null, status: 'Sent', feedback: null, date: null },
+        ],
+      },
+      {
+        clientId: 5,
+        company: 'Creative Studio',
+        city: 'Barcelona',
+        country: 'Spain',
+        respondents: [
+          { id: 'r3a', name: 'Elena Vasquez', role: 'CEO', email: 'elena@creativestudio.net', nps: 10, csat: 5, status: 'Responded', feedback: 'Exceptional product! The team has been incredibly responsive and features keep getting better.', date: '2024-03-05T16:45:00Z' },
+          { id: 'r3b', name: 'Carlos Mendez', role: 'Art Director', email: 'c.mendez@creativestudio.net', nps: 9, csat: 5, status: 'Responded', feedback: 'The visual analytics dashboard is a game changer for our client presentations.', date: '2024-03-06T10:20:00Z' },
+          { id: 'r3c', name: 'Ana Lima', role: 'Marketing Lead', email: 'a.lima@creativestudio.net', nps: 7, csat: 4, status: 'Responded', feedback: 'Solid tool. The automated survey flows save us a lot of manual work each week.', date: '2024-03-08T13:00:00Z' },
+          { id: 'r3d', name: 'Tom Reeves', role: 'Dev Lead', email: 't.reeves@creativestudio.net', nps: null, csat: null, status: 'Sent', feedback: null, date: null },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'CAMP-2024-02',
+    title: 'February Check-in',
+    sentDate: '2024-02-14',
+    status: 'Completed',
+    totalSent: 467,
+    totalResponses: 323,
+    avgNps: 68,
+    avgCsat: 4.1,
+    clients: [
+      {
+        clientId: 8,
+        company: 'Deutsch Analytics',
+        city: 'Berlin',
+        country: 'Germany',
+        respondents: [
+          { id: 'r4a', name: 'Thomas Müller', role: 'CEO', email: 't.muller@deutsch.de', nps: 8, csat: 4, status: 'Responded', feedback: 'Very solid platform. The NPS tracking capabilities are exactly what we needed.', date: '2024-02-15T10:55:00Z' },
+          { id: 'r4b', name: 'Hanna Becker', role: 'Data Lead', email: 'h.becker@deutsch.de', nps: 9, csat: 5, status: 'Responded', feedback: 'Excellent segmentation features. Makes it easy to drill down into specific cohorts.', date: '2024-02-16T09:30:00Z' },
+          { id: 'r4c', name: 'Klaus Weber', role: 'IT Manager', email: 'k.weber@deutsch.de', nps: 7, csat: 3, status: 'Responded', feedback: 'Solid experience. Integration with our CRM took some time but works well now.', date: '2024-02-18T14:45:00Z' },
+          { id: 'r4d', name: 'Felix Richter', role: 'Dev Lead', email: 'f.richter@deutsch.de', nps: null, csat: null, status: 'Sent', feedback: null, date: null },
+        ],
+      },
+      {
+        clientId: 4,
+        company: 'Startup XYZ',
+        city: 'Dublin',
+        country: 'Ireland',
+        respondents: [
+          { id: 'r8a', name: "James O'Brien", role: 'Founder', email: 'james@startup.xyz', nps: null, csat: null, status: 'Pending', feedback: null, date: null },
+          { id: 'r8b', name: 'Sophie Bourke', role: 'Operations Manager', email: 'sophie@startup.xyz', nps: 9, csat: 5, status: 'Responded', feedback: 'Perfect for a lean startup. Scalable and easy to integrate into our workflows.', date: '2024-02-20T10:50:00Z' },
+          { id: 'r8c', name: 'Liam Murphy', role: 'Head of Growth', email: 'liam@startup.xyz', nps: 8, csat: 4, status: 'Responded', feedback: 'Great MVP. Looking forward to seeing how this evolves over the next years.', date: '2024-02-21T15:30:00Z' },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'CAMP-2023-12',
+    title: 'Year-End Pulse',
+    sentDate: '2023-12-15',
+    status: 'Completed',
+    totalSent: 698,
+    totalResponses: 456,
+    avgNps: 62,
+    avgCsat: 4.0,
+    clients: [
+      {
+        clientId: 7,
+        company: 'Retail Plus',
+        city: 'Lagos',
+        country: 'Nigeria',
+        respondents: [
+          { id: 'r5a', name: 'Amara Okafor', role: 'CEO', email: 'amara@retail.ng', nps: 5, csat: 3, status: 'Responded', feedback: 'Average experience. Had some issues with the onboarding process.', date: '2023-12-18T13:10:00Z' },
+          { id: 'r5b', name: 'Emeka Nwosu', role: 'Sales Manager', email: 'e.nwosu@retail.ng', nps: 6, csat: 3, status: 'Responded', feedback: 'Useful for tracking but the mobile experience needs improvement.', date: '2023-12-19T10:00:00Z' },
+          { id: 'r5c', name: 'Fatima Abdullahi', role: 'Operations Lead', email: 'f.abdullahi@retail.ng', nps: null, csat: null, status: 'Pending', feedback: null, date: null },
+        ],
+      },
+      {
+        clientId: 1,
+        company: 'TechCorp Solutions',
+        city: 'San Francisco',
+        country: 'USA',
+        respondents: [
+          { id: 'r9a', name: 'Sarah Chen', role: 'CTO', email: 'sarah.chen@techcorp.io', nps: 8, csat: 4, status: 'Responded', feedback: 'Solid year-end review. Good visibility into our NPS trends over the quarter.', date: '2023-12-17T09:30:00Z' },
+          { id: 'r9b', name: 'Alex Park', role: 'Product Manager', email: 'alex.park@techcorp.io', nps: 7, csat: 4, status: 'Responded', feedback: 'Useful benchmarking data. Would love year-over-year comparison charts.', date: '2023-12-18T11:00:00Z' },
+        ],
+      },
     ],
   },
 ]
