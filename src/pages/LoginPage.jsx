@@ -1,40 +1,42 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { motion } from 'framer-motion'
-import { Mail, Lock, ArrowRight, Eye, EyeOff } from 'lucide-react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { Mail, Lock, ArrowRight, Eye, EyeOff, BarChart2, Lightbulb, Users } from 'lucide-react'
 import { CPrimeLogo } from '../components/common/CPrimeLogo'
 
-const cardVariants = {
-  hidden: { opacity: 0, y: 28, scale: 0.97 },
-  show: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.45, ease: [0.16, 1, 0.3, 1] } },
-}
-
 const fieldVariants = {
-  hidden: { opacity: 0, y: 12 },
+  hidden: { opacity: 0, y: 10 },
   show: (i) => ({
     opacity: 1, y: 0,
-    transition: { delay: 0.15 + i * 0.07, duration: 0.35, ease: [0.16, 1, 0.3, 1] },
+    transition: { delay: 0.08 + i * 0.06, duration: 0.32, ease: [0.16, 1, 0.3, 1] },
   }),
 }
 
+const ROLES = [
+  { id: 'admin',      label: 'Admin' },
+  { id: 'leadership', label: 'Leadership' },
+]
+
+const features = [
+  { icon: BarChart2, color: 'bg-neon',     title: 'Real-time Analytics',  body: 'Monitor NPS & CSAT trends live as they happen across all clients.' },
+  { icon: Lightbulb, color: 'bg-lemon',   title: 'Actionable Insights',   body: 'Detailed segmentation to identify exactly where to improve.' },
+  { icon: Users,     color: 'bg-orange-1', title: 'Team Collaboration',   body: 'Share reports and act on feedback across departments.' },
+]
+
 export default function LoginPage() {
   const navigate = useNavigate()
-  const [role, setRole] = useState('admin')
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
+  const [role, setRole]                 = useState('admin')
+  const [email, setEmail]               = useState('')
+  const [password, setPassword]         = useState('')
   const [showPassword, setShowPassword] = useState(false)
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
+  const [loading, setLoading]           = useState(false)
+  const [error, setError]               = useState('')
 
   function handleSubmit(e) {
     e.preventDefault()
-    if (!email || !password) {
-      setError('Please enter your email and password.')
-      return
-    }
+    if (!email || !password) { setError('Please complete all required fields.'); return }
     setError('')
     setLoading(true)
-    // Simulate auth - both roles go to the same dashboard for now
     setTimeout(() => {
       localStorage.setItem('cprime_role', role)
       setLoading(false)
@@ -43,114 +45,105 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen w-screen flex flex-col relative overflow-hidden bg-gray-50">
-      {/* Top Navigation Bar */}
-      <nav className="w-full bg-white border-b border-gray-200 px-8 py-4 flex items-center shadow-sm">
-        <CPrimeLogo />
-      </nav>
+    /* Root: full viewport, side-by-side on lg+ */
+    <div className="min-h-screen w-full flex flex-col lg:flex-row">
 
-      {/* Main Content Area */}
-      <div className="flex-1 flex relative overflow-hidden">
-      {/* Left Section - Content */}
-      <motion.div
-        initial={{ opacity: 0, x: -40 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-        className="hidden lg:flex w-1/2 flex-col justify-center px-20 pt-24 pb-8 bg-gradient-to-br from-turquoise-1 via-turquoise-2 to-turquoise-1 relative"
-      >
-        {/* Ensures consistent contrast for white text across the gradient */}
-        <div className="absolute inset-0 bg-black/20" />
-        <div className="relative z-10">
-        {/* Main Heading */}
-        <div className="mb-8">
-          <h1 className="text-6xl font-semibold text-white mb-4 font-display">
-            Measure What <span className="text-neon">Matters</span>
-          </h1>
-          <p className="text-xl text-gray-100 leading-relaxed font-body">
-            Transform customer feedback into actionable insights. CPRIME helps you track, analyze, and improve your Net Promoter Score in real-time.
-          </p>
-        </div>
+      {/* ── LEFT PANEL ── hidden below lg ─────────────────────── */}
+      <div className="hidden lg:flex lg:w-[45%] xl:w-1/2 shrink-0 relative overflow-hidden
+                      bg-gradient-to-br from-turquoise-1 via-turquoise-2 to-turquoise-1
+                      flex-col justify-between px-10 xl:px-16 py-12 xl:py-16">
 
-        {/* Features List */}
-        <div className="space-y-5 mt-10">
-          <div className="flex gap-4 items-start">
-            <div className="w-1.5 h-12 bg-neon rounded-full flex-shrink-0 mt-1"></div>
-            <div>
-              <h3 className="text-lg font-semibold text-white mb-1 font-body">Real-time Analytics</h3>
-              <p className="text-gray-100 text-sm font-body">Monitor NPS trends as they happen with our live dashboard</p>
-            </div>
-          </div>
-          
-          <div className="flex gap-4 items-start">
-            <div className="w-1.5 h-12 bg-lemon rounded-full flex-shrink-0 mt-1"></div>
-            <div>
-              <h3 className="text-lg font-semibold text-white mb-1 font-body">Actionable Insights</h3>
-              <p className="text-gray-100 text-sm font-body">Get detailed segmentation and identify improvement areas</p>
-            </div>
-          </div>
+        {/* Subtle overlay */}
+        <div className="absolute inset-0 bg-black/15 pointer-events-none" />
 
-          <div className="flex gap-4 items-start">
-            <div className="w-1.5 h-12 bg-orange-1 rounded-full flex-shrink-0 mt-1"></div>
-            <div>
-              <h3 className="text-lg font-semibold text-white mb-1 font-body">Team Collaboration</h3>
-              <p className="text-gray-100 text-sm font-body">Share reports and collaborate across departments</p>
-            </div>
-          </div>
-        </div>
+        <div className="relative z-10 flex flex-col h-full gap-10">
 
-        {/* Stats */}
-        <div className="mt-12 pt-8 border-t border-white/20 flex gap-16">
+          {/* Title */}
           <div>
-            <div className="text-5xl font-bold text-neon mb-2 font-display">500+</div>
-            <p className="text-sm text-gray-100 font-body">Companies using CPRIME</p>
+            <p className="text-[11px] font-bold uppercase tracking-[0.3em] text-neon font-body mb-3">
+              CPRIME PULSE SURVEY
+            </p>
+            <h2 className="font-display font-bold text-white text-3xl xl:text-5xl leading-[1.15]">
+              Turn Feedback<br />Into Growth.
+            </h2>
+            <p className="text-white/70 font-body text-sm xl:text-base mt-4 leading-relaxed max-w-xs">
+              Measure, understand, and act on what your clients really think — in one unified platform.
+            </p>
           </div>
-          <div>
-            <div className="text-5xl font-bold text-lemon mb-2 font-display">2M+</div>
-            <p className="text-sm text-gray-100 font-body">Surveys analyzed</p>
-          </div>
-        </div>
-        </div>
-      </motion.div>
 
-      {/* Right Section - Login Form */}
-      <motion.div
-        variants={cardVariants}
-        initial="hidden"
-        animate="show"
-        className="w-full lg:w-1/2 flex flex-col justify-start items-center pt-6 px-8 pb-16 bg-white"
-      >
-        <div className="w-full max-w-sm">
+          {/* Features */}
+          <div className="flex flex-col gap-5 xl:gap-7 flex-1 justify-center">
+            {features.map(({ icon: Icon, color, title, body }) => (
+              <div key={title} className="flex gap-3 xl:gap-4 items-start">
+                <div className={`w-8 h-8 xl:w-10 xl:h-10 rounded-xl ${color} flex items-center justify-center shrink-0 mt-0.5`}>
+                  <Icon size={15} className="text-black" />
+                </div>
+                <div>
+                  <h3 className="text-sm xl:text-base font-semibold text-white font-body mb-0.5">{title}</h3>
+                  <p className="text-white/60 text-xs xl:text-sm font-body leading-relaxed">{body}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Stats */}
+          <div className="pt-6 border-t border-white/20 flex gap-8 xl:gap-12">
+            <div>
+              <p className="text-3xl xl:text-4xl font-bold text-neon font-display">500+</p>
+              <p className="text-xs xl:text-sm text-white/60 font-body mt-1">Companies using CPRIME</p>
+            </div>
+            <div>
+              <p className="text-3xl xl:text-4xl font-bold text-lemon font-display">2M+</p>
+              <p className="text-xs xl:text-sm text-white/60 font-body mt-1">Surveys analyzed</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* ── RIGHT PANEL ── full screen on mobile, 55%/50% on desktop ─ */}
+      <div className="flex-1 flex flex-col bg-white min-h-screen lg:min-h-0">
+
+        {/* Top bar: logo */}
+        <div className="flex items-center justify-between px-6 sm:px-10 pt-6 sm:pt-8 shrink-0">
+          {/* Mobile brand name */}
+          <span className="lg:hidden font-display font-bold text-gray-900 text-lg tracking-tight">CPRIME</span>
+          <div className="ml-auto">
+            <CPrimeLogo />
+          </div>
+        </div>
+
+        {/* Form area — grows to fill, centres content */}
+        <div className="flex-1 flex items-center justify-center px-6 sm:px-10 py-10">
+          <div className="w-full max-w-[360px]">
 
             {/* Heading */}
-            <motion.div custom={0} variants={fieldVariants} initial="hidden" animate="show" className="mb-8">
-              <h1 className="font-semibold text-gray-600 text-4xl leading-tight mb-2 font-display">
+            <motion.div custom={0} variants={fieldVariants} initial="hidden" animate="show" className="mb-7">
+              <h1 className="font-display font-bold text-gray-900 text-3xl sm:text-4xl leading-tight mb-2">
                 Welcome back
               </h1>
-              <p className="text-base text-gray-500 font-body">
+              <p className="text-gray-400 font-body text-sm sm:text-base">
                 Sign in to access your dashboard
               </p>
             </motion.div>
 
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className="flex flex-col gap-4">
 
-              {/* Role selector */}
+              {/* Role toggle */}
               <motion.div custom={1} variants={fieldVariants} initial="hidden" animate="show">
-                <label className="text-xs text-gray-500 uppercase tracking-wider block mb-2 font-semibold font-body">
+                <label className="text-[11px] text-gray-500 uppercase tracking-wider block mb-2 font-semibold font-body">
                   Sign in as
                 </label>
-                <div className="flex items-center bg-gray-100 rounded-[2px] p-1.5 gap-1.5 border border-gray-200">
-                  {['admin', 'user'].map((r) => (
+                <div className="flex bg-gray-100 rounded-[2px] p-1.5 gap-1.5 border border-gray-200">
+                  {ROLES.map(({ id, label }) => (
                     <button
-                      key={r}
+                      key={id}
                       type="button"
-                      onClick={() => setRole(r)}
-                      className={`flex-1 py-2.5 rounded-[2px] text-sm font-semibold capitalize transition-all duration-200 ${
-                        role === r
-                          ? 'bg-gray-600 text-neon shadow-sm'
-                          : 'text-gray-500 hover:text-gray-600'
+                      onClick={() => setRole(id)}
+                      className={`flex-1 py-2.5 rounded-[2px] text-sm font-semibold font-body transition-all duration-200 ${
+                        role === id ? 'bg-gray-800 text-neon shadow-sm' : 'text-gray-500 hover:text-gray-800'
                       }`}
                     >
-                      {r === 'admin' ? 'Admin' : 'User'}
+                      {label}
                     </button>
                   ))}
                 </div>
@@ -158,17 +151,19 @@ export default function LoginPage() {
 
               {/* Email */}
               <motion.div custom={2} variants={fieldVariants} initial="hidden" animate="show">
-                <label className="text-xs text-gray-500 uppercase tracking-wider block mb-2 font-semibold font-body">
+                <label className="text-[11px] text-gray-500 uppercase tracking-wider block mb-2 font-semibold font-body">
                   Email
                 </label>
                 <div className="relative">
-                  <Mail size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+                  <Mail size={15} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
                   <input
                     type="email"
                     placeholder="you@company.com"
                     value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="w-full h-9 md:h-[42px] pl-11 pr-4 rounded-[2px] border border-gray-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-neon/40 focus:border-turquoise-2 transition-all placeholder:text-gray-300 font-body"
+                    onChange={(e) => { setEmail(e.target.value); setError('') }}
+                    className="w-full h-11 pl-10 pr-4 rounded-[2px] border border-gray-200 text-sm bg-white
+                               focus:outline-none focus:ring-2 focus:ring-neon/40 focus:border-neon/60
+                               transition-all placeholder:text-gray-300 font-body"
                   />
                 </div>
               </motion.div>
@@ -176,7 +171,7 @@ export default function LoginPage() {
               {/* Password */}
               <motion.div custom={3} variants={fieldVariants} initial="hidden" animate="show">
                 <div className="flex items-center justify-between mb-2">
-                  <label className="text-xs text-gray-500 uppercase tracking-wider font-semibold font-body">
+                  <label className="text-[11px] text-gray-500 uppercase tracking-wider font-semibold font-body">
                     Password
                   </label>
                   <span className="text-xs text-turquoise-2 cursor-pointer hover:text-turquoise-1 transition-colors font-semibold font-body">
@@ -184,60 +179,87 @@ export default function LoginPage() {
                   </span>
                 </div>
                 <div className="relative">
-                  <Lock size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+                  <Lock size={15} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
                   <input
                     type={showPassword ? 'text' : 'password'}
-                    placeholder="********"
+                    placeholder="••••••••"
                     value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="w-full h-9 md:h-[42px] pl-11 pr-11 rounded-[2px] border border-gray-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-neon/40 focus:border-turquoise-2 transition-all placeholder:text-gray-300 font-body"
+                    onChange={(e) => { setPassword(e.target.value); setError('') }}
+                    className="w-full h-11 pl-10 pr-11 rounded-[2px] border border-gray-200 text-sm bg-white
+                               focus:outline-none focus:ring-2 focus:ring-neon/40 focus:border-neon/60
+                               transition-all placeholder:text-gray-300 font-body"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword((p) => !p)}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-500 transition-colors"
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
                   >
-                    {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                    {showPassword ? <EyeOff size={15} /> : <Eye size={15} />}
                   </button>
                 </div>
               </motion.div>
 
               {/* Error */}
-              {error && (
-                <motion.p
-                  initial={{ opacity: 0, y: -4 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="text-xs text-magenta font-semibold font-body"
-                >
-                  {error}
-                </motion.p>
-              )}
+              <AnimatePresence>
+                {error && (
+                  <motion.p
+                    initial={{ opacity: 0, y: -4 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0 }}
+                    className="text-xs text-rose-500 font-semibold font-body -mt-1"
+                  >
+                    {error}
+                  </motion.p>
+                )}
+              </AnimatePresence>
 
               {/* Submit */}
               <motion.div custom={4} variants={fieldVariants} initial="hidden" animate="show" className="pt-1">
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full h-14 flex items-center justify-center gap-2.5 rounded-[2px] bg-neon text-black text-sm font-semibold hover:bg-gradient-primary active:scale-[0.98] transition-all duration-150 disabled:opacity-60 disabled:cursor-not-allowed uppercase tracking-[0.2em] border border-neon font-body"
+                  className="w-full h-12 sm:h-14 flex items-center justify-center gap-2.5 rounded-[2px]
+                             bg-neon text-black text-sm font-semibold font-body
+                             hover:bg-yellow-300 active:scale-[0.98] transition-all duration-150
+                             disabled:opacity-60 disabled:cursor-not-allowed
+                             uppercase tracking-[0.18em]"
                 >
                   {loading ? (
                     <>
                       <span className="w-4 h-4 border-2 border-black/20 border-t-black rounded-full animate-spin" />
-                      Signing in...
+                      Signing in…
                     </>
                   ) : (
                     <>
-                      Sign in as {role === 'admin' ? 'Admin' : 'User'}
-                      <ArrowRight size={16} />
+                      Sign in as {ROLES.find((r) => r.id === role)?.label}
+                      <ArrowRight size={15} />
                     </>
                   )}
                 </button>
               </motion.div>
-
             </form>
+
+            {/* Mobile: feature pills (shown instead of left panel) */}
+            <div className="lg:hidden mt-8 pt-6 border-t border-gray-100">
+              <p className="text-[11px] text-gray-400 uppercase tracking-wider font-body font-semibold mb-3">
+                Why CPRIME
+              </p>
+              <div className="flex flex-col gap-3">
+                {features.map(({ icon: Icon, color, title }) => (
+                  <div key={title} className="flex items-center gap-3">
+                    <div className={`w-7 h-7 rounded-lg ${color} flex items-center justify-center shrink-0`}>
+                      <Icon size={13} className="text-black" />
+                    </div>
+                    <span className="text-sm font-body text-gray-600 font-medium">{title}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+          </div>
         </div>
-      </motion.div>
       </div>
+
     </div>
   )
 }

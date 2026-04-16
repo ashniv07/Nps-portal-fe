@@ -521,6 +521,19 @@ export const clientsData = [
   },
 ]
 
+export const prospectsData = [
+  { id: 'p1', name: 'Aiko Matsumoto',  company: 'Nexus Digital',      city: 'Tokyo',     country: 'Japan',     lat: 35.68, lng: 139.69, industry: 'Technology',  stage: 'Discovery',    email: 'aiko@nexusdigital.jp' },
+  { id: 'p2', name: 'Raj Subramaniam', company: 'FinScale Asia',      city: 'Singapore', country: 'Singapore', lat:  1.35, lng: 103.82, industry: 'Finance',     stage: 'Proposal',     email: 'raj@finscale.sg' },
+  { id: 'p3', name: 'Claire Dupont',   company: 'Lumière Analytics',  city: 'Paris',     country: 'France',    lat: 48.86, lng:   2.35, industry: 'Consulting',  stage: 'Negotiation',  email: 'claire@lumiere.fr' },
+  { id: 'p4', name: 'Noah Tremblay',   company: 'NorthStar Insights', city: 'Toronto',   country: 'Canada',    lat: 43.65, lng: -79.38, industry: 'Healthcare',  stage: 'Discovery',    email: 'noah@northstar.ca' },
+  { id: 'p5', name: 'Laila Hassan',    company: 'Gulf CX Group',      city: 'Dubai',     country: 'UAE',       lat: 25.20, lng:  55.27, industry: 'Retail',      stage: 'Proposal',     email: 'laila@gulfcx.ae' },
+  { id: 'p6', name: 'Pita Havili',     company: 'Pacific Data Co.',   city: 'Sydney',    country: 'Australia', lat: -33.87, lng: 151.21, industry: 'Media',      stage: 'Discovery',    email: 'pita@pacificdata.au' },
+  { id: 'p7', name: 'Fernanda Costa',  company: 'BrasilMetrics',      city: 'São Paulo', country: 'Brazil',    lat: -23.55, lng: -46.63, industry: 'E-commerce', stage: 'Negotiation',  email: 'fernanda@brasilmetrics.com' },
+  { id: 'p8', name: 'Ivan Petrov',     company: 'DataForge EU',       city: 'Berlin',    country: 'Germany',   lat: 52.52, lng:  13.41, industry: 'Analytics',   stage: 'Proposal',     email: 'ivan@dataforge.eu' },
+  { id: 'p9', name: 'Mei Ling',        company: 'ChinaVoice Corp.',   city: 'Shanghai',  country: 'China',     lat: 31.23, lng: 121.47, industry: 'Consumer',    stage: 'Discovery',    email: 'mei@chinavoice.cn' },
+  { id: 'p10', name: 'Carlos Ortega',  company: 'Latam CX Hub',       city: 'New York',  country: 'USA',       lat: 40.71, lng: -74.00, industry: 'Consulting',  stage: 'Proposal',     email: 'carlos@latamcx.com' },
+]
+
 export const historyData = [
   {
     id: 'SRV-2024-031',

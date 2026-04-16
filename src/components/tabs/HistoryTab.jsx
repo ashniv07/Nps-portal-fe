@@ -171,45 +171,41 @@ function DetailPanel({ survey, client, selectedRespondent, onClose, surveyType }
       <div className="p-6 space-y-5 overflow-y-auto max-h-[calc(100vh-260px)] scrollbar-thin">
 
         {/* Score hero */}
-        <div className={`text-center p-5 rounded-2xl text-white relative overflow-hidden ${
-          'bg-gradient-to-br from-neon to-yellow-300 text-black'
-        }`}>
+        <div className="text-center p-5 rounded-2xl relative overflow-hidden bg-gradient-to-br from-neon to-yellow-300">
           <div className="absolute inset-0 opacity-10" style={{
-            background: isCsat
-              ? 'radial-gradient(circle at 50% 0%, #fff, transparent 70%)'
-              : 'radial-gradient(circle at 50% 0%, #CDDE33, transparent 70%)',
+            background: 'radial-gradient(circle at 50% 0%, #fff, transparent 70%)',
           }} />
           {isCsat ? (
             <>
-              <p className="text-xs text-white/60 font-body uppercase tracking-wider mb-2">Avg CSAT</p>
+              <p className="text-xs text-black/60 font-body uppercase tracking-wider mb-2">Avg CSAT</p>
               <div className="flex items-end justify-center gap-1">
-                <p className="text-5xl font-bold font-display text-white leading-none">{survey.avgCsat}</p>
-                <p className="text-lg font-display text-white/40 mb-0.5">/5</p>
+                <p className="text-5xl font-bold font-display text-black leading-none">{survey.avgCsat}</p>
+                <p className="text-lg font-display text-black/40 mb-0.5">/5</p>
               </div>
               <div className="flex justify-center gap-1 mt-2">
                 {Array.from({ length: 5 }).map((_, i) => (
-                  <Star key={i} size={13} className={i < Math.round(survey.avgCsat) ? 'fill-white text-white' : 'fill-white/20 text-white/20'} />
+                  <Star key={i} size={13} className={i < Math.round(survey.avgCsat) ? 'fill-black/80 text-black/80' : 'fill-black/20 text-black/20'} />
                 ))}
               </div>
             </>
           ) : (
             <>
-              <p className="text-xs text-gray-400 font-body uppercase tracking-wider mb-2">Net Promoter Score</p>
-              <p className="text-5xl font-bold font-display text-neon leading-none">{survey.avgNps}</p>
+              <p className="text-xs text-black/60 font-body uppercase tracking-wider mb-2">Net Promoter Score</p>
+              <p className="text-5xl font-bold font-display text-black leading-none">{survey.avgNps}</p>
               <div className="mt-2 flex items-center justify-center gap-1.5">
-                <TrendingUp size={12} className="text-emerald-400" />
-                <span className="text-xs text-emerald-400 font-body">+4 vs previous campaign</span>
+                <TrendingUp size={12} className="text-black/50" />
+                <span className="text-xs text-black/50 font-body">+4 vs previous campaign</span>
               </div>
             </>
           )}
           <div className="mt-4 grid grid-cols-2 gap-2.5">
-            <div className="bg-white/10 rounded-xl p-2.5">
-              <p className="text-xs text-white/50 font-body">Response Rate</p>
-              <span className="text-lg font-bold font-display text-white">{responseRate}%</span>
+            <div className="bg-black/10 rounded-xl p-2.5">
+              <p className="text-xs text-black/50 font-body">Response Rate</p>
+              <span className="text-lg font-bold font-display text-black">{responseRate}%</span>
             </div>
-            <div className="bg-white/10 rounded-xl p-2.5">
-              <p className="text-xs text-white/50 font-body">Total Sent</p>
-              <span className="text-lg font-bold font-display text-white">{survey.totalSent}</span>
+            <div className="bg-black/10 rounded-xl p-2.5">
+              <p className="text-xs text-black/50 font-body">Total Sent</p>
+              <span className="text-lg font-bold font-display text-black">{survey.totalSent}</span>
             </div>
           </div>
         </div>
@@ -513,7 +509,7 @@ export function HistoryTab({ surveyType = 'nps' }) {
             className="overflow-hidden"
           >
             <Card hover={false} className="p-5">
-              <div className="grid grid-cols-4 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 <div>
                   <label className="text-xs text-gray-400 font-body block mb-1.5 uppercase tracking-wider">Date From</label>
                   <input type="date" value={dateFrom} onChange={(e) => setDateFrom(e.target.value)}
@@ -547,9 +543,9 @@ export function HistoryTab({ surveyType = 'nps' }) {
       </AnimatePresence>
 
       {/* Main layout */}
-      <div className={`grid gap-5 ${selected ? 'grid-cols-5' : 'grid-cols-1'}`}>
+      <div className={`grid gap-5 ${selected ? 'grid-cols-1 lg:grid-cols-5' : 'grid-cols-1'}`}>
         {/* Survey list */}
-        <div className={selected ? 'col-span-3' : 'col-span-1'}>
+        <div className={selected ? 'col-span-1 lg:col-span-3' : 'col-span-1'}>
           <div className="space-y-3">
             {filtered.length === 0 ? (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="py-16 text-center">
@@ -577,7 +573,7 @@ export function HistoryTab({ surveyType = 'nps' }) {
         {/* Detail panel */}
         <AnimatePresence>
           {selected && (
-            <div className="col-span-2">
+            <div className="col-span-1 lg:col-span-2">
               <DetailPanel
                 survey={selected}
                 client={selected.client}

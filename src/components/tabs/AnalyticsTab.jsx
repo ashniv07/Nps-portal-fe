@@ -13,16 +13,14 @@ import {
   SmilePlus,
   Meh,
   Frown,
-  MapPin,
-  X,
 } from 'lucide-react'
 import { Card, CardHeader, CardContent } from '../ui/Card'
 import { Tooltip } from '../ui/Tooltip'
 import { NpsTrendChart } from '../charts/NpsTrendChart'
 import { CsatBarChart } from '../charts/CsatBarChart'
-import { GlobeChart } from '../charts/GlobeChart'
+import { MapPanel } from '../charts/WorldMapChart'
 import { InsightModal } from '../modals/InsightModal'
-import { npsData, csatData, kpiData, csatDistributionData, clientsData } from '../../data/dummyData'
+import { npsData, csatData, kpiData, csatDistributionData, clientsData, prospectsData } from '../../data/dummyData'
 
 const container = {
   hidden: {},
@@ -87,106 +85,9 @@ const csatDissatisfied = csatDistributionData
   .filter((d) => d.label.includes('1') || d.label.includes('2'))
   .reduce((a, b) => a + b.value, 0) // 6+8 = 14
 
-function GlobeClientPanel({ client, surveyType, onClose }) {
-  const isCsat = surveyType === 'csat'
-  const initials = client.name.split(' ').map((n) => n[0]).join('')
-
-  return (
-    <div className="space-y-5">
-      {/* Header */}
-      <div className="flex items-start justify-between">
-        <div className="flex items-center gap-3.5">
-          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center text-xl font-bold text-gray-600 shrink-0">
-            {initials}
-          </div>
-          <div>
-            <h4 className="font-display font-semibold text-gray-900 text-lg leading-tight">{client.name}</h4>
-            <p className="text-sm text-gray-500 font-body">{client.company}</p>
-            <p className="text-xs text-gray-400 font-body flex items-center gap-1 mt-0.5">
-              <MapPin size={11} />
-              {client.city}, {client.country}
-            </p>
-          </div>
-        </div>
-        <button
-          onClick={onClose}
-          className="p-1.5 rounded-xl hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors"
-        >
-          <X size={16} />
-        </button>
-      </div>
-
-      {/* Score */}
-      <div className={`rounded-2xl p-4 ${
-        client.status !== 'Responded'
-          ? 'bg-gray-50'
-          : isCsat
-            ? 'bg-teal/8'
-            : client.nps >= 9 ? 'bg-emerald-50' : client.nps >= 7 ? 'bg-amber-50' : 'bg-rose-50'
-      }`}>
-        {client.status !== 'Responded' ? (
-          <div className="text-center py-2">
-            <p className="text-sm text-gray-400 font-body">Survey {client.status.toLowerCase()} — no response yet</p>
-          </div>
-        ) : isCsat ? (
-          <div className="flex items-center gap-3">
-            <div className="text-center">
-              <p className="text-xs text-gray-500 font-body uppercase tracking-wider mb-1">CSAT Score</p>
-              <div className="flex items-center gap-1">
-                {Array.from({ length: 5 }).map((_, i) => (
-                  <Star key={i} size={18} className={i < (client.csat || 0) ? 'fill-teal text-teal' : 'fill-gray-200 text-gray-200'} />
-                ))}
-              </div>
-              <p className="text-2xl font-bold font-display text-teal mt-1">{client.csat}<span className="text-sm text-gray-400">/5</span></p>
-            </div>
-          </div>
-        ) : (
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-xs text-gray-500 font-body uppercase tracking-wider mb-1">NPS Score</p>
-              <p className={`text-4xl font-bold font-display ${
-                client.nps >= 9 ? 'text-emerald-600' : client.nps >= 7 ? 'text-amber-500' : 'text-rose-500'
-              }`}>{client.nps}<span className="text-sm text-gray-400 font-body">/10</span></p>
-            </div>
-            <span className={`text-xs font-semibold px-3 py-1.5 rounded-xl font-body ${
-              client.nps >= 9 ? 'bg-emerald-100 text-emerald-700' :
-              client.nps >= 7 ? 'bg-amber-100 text-amber-700' :
-              'bg-rose-100 text-rose-600'
-            }`}>
-              {client.nps >= 9 ? 'Promoter' : client.nps >= 7 ? 'Passive' : 'Detractor'}
-            </span>
-          </div>
-        )}
-      </div>
-
-      {/* Feedback */}
-      {client.feedback && (
-        <div className="bg-gray-50 rounded-2xl p-4">
-          <p className="text-xs text-gray-400 font-body uppercase tracking-wider mb-2">Feedback</p>
-          <p className="text-sm text-gray-700 font-body leading-relaxed italic">"{client.feedback}"</p>
-        </div>
-      )}
-
-      {/* Meta */}
-      <div className="grid grid-cols-2 gap-2.5">
-        <div className="bg-gray-50 rounded-xl p-3">
-          <p className="text-[10px] text-gray-400 uppercase tracking-wider font-body">Email</p>
-          <p className="text-xs font-body text-gray-700 mt-0.5 truncate">{client.email}</p>
-        </div>
-        <div className="bg-gray-50 rounded-xl p-3">
-          <p className="text-[10px] text-gray-400 uppercase tracking-wider font-body">Response Date</p>
-          <p className="text-xs font-body text-gray-700 mt-0.5">
-            {client.date ? new Date(client.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '—'}
-          </p>
-        </div>
-      </div>
-    </div>
-  )
-}
 
 export function AnalyticsTab({ surveyType = 'nps' }) {
   const [modal, setModal] = useState(null)
-  const [globeClient, setGlobeClient] = useState(null)
   const isCsat = surveyType === 'csat'
 
   return (
@@ -194,7 +95,7 @@ export function AnalyticsTab({ surveyType = 'nps' }) {
       <motion.div variants={container} initial="hidden" animate="show" className="space-y-6">
 
         {/* Hero Row */}
-        <motion.div variants={item} className="grid grid-cols-2 gap-5">
+        <motion.div variants={item} className="grid grid-cols-1 sm:grid-cols-2 gap-5">
 
           {isCsat ? (
             /* ── CSAT HERO ── */
@@ -288,7 +189,7 @@ export function AnalyticsTab({ surveyType = 'nps' }) {
           )}
 
           {/* KPI mini cards — always shown */}
-          <div className="grid grid-cols-2 gap-4 content-start">
+          <div className="grid grid-cols-2 gap-3 sm:gap-4 content-start">
             <Card className="p-5" hover>
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-blue-500">
@@ -342,8 +243,8 @@ export function AnalyticsTab({ surveyType = 'nps' }) {
         </motion.div>
 
         {/* Charts Row */}
-        <div className="grid grid-cols-5 gap-5">
-          <motion.div variants={item} className="col-span-3">
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-5">
+          <motion.div variants={item} className="col-span-1 lg:col-span-3">
             <Card hover={false}>
               <CardHeader>
                 <div className="flex items-center justify-between">
@@ -367,7 +268,7 @@ export function AnalyticsTab({ surveyType = 'nps' }) {
             </Card>
           </motion.div>
 
-          <motion.div variants={item} className="col-span-2">
+          <motion.div variants={item} className="col-span-1 lg:col-span-2">
             {isCsat ? (
               <Card hover={false}>
                 <CardHeader>
@@ -422,7 +323,7 @@ export function AnalyticsTab({ surveyType = 'nps' }) {
         </div>
 
         {/* Breakdown Cards */}
-        <motion.div variants={item} className="grid grid-cols-3 gap-5">
+        <motion.div variants={item} className="grid grid-cols-1 sm:grid-cols-3 gap-5">
           {isCsat ? (
             /* ── CSAT breakdown: Satisfied / Neutral / Dissatisfied ── */
             <>
@@ -534,83 +435,42 @@ export function AnalyticsTab({ surveyType = 'nps' }) {
           )}
         </motion.div>
 
-        {/* Globe Section */}
+        {/* Map Section */}
         <motion.div variants={item}>
           <div className="rounded-2xl border border-gray-100 shadow-card overflow-hidden">
-            <div className="flex" style={{ minHeight: '480px' }}>
-
-              {/* Globe panel */}
-              <div className="bg-gray-50 flex flex-col border-r border-gray-100" style={{ width: '58%' }}>
-                <div className="px-7 pt-6 pb-3">
-                  <h3 className="font-display font-semibold text-gray-600 text-lg">Global Client Map</h3>
-                  <p className="text-xs text-gray-400 font-body mt-0.5">
-                    Spinning · Click a pin to explore client details
-                  </p>
-                </div>
-
-                <div className="flex-1">
-                  <GlobeChart
-                    clients={clientsData}
-                    surveyType={surveyType}
-                    onClientSelect={setGlobeClient}
-                    selectedClient={globeClient}
-                  />
-                </div>
-
-                {/* Legend */}
-                <div className="px-7 pb-5 flex items-center gap-5">
-                  {[
-                    { color: 'bg-neon', label: isCsat ? 'Satisfied (4–5★)' : 'Promoter (9–10)' },
-                    { color: 'bg-orange-300', label: isCsat ? 'Neutral (3★)' : 'Passive (7–8)' },
-                    { color: 'bg-rose-500', label: isCsat ? 'Dissatisfied (1–2★)' : 'Detractor (0–6)' },
-                    { color: 'bg-gray-500', label: 'Pending' },
-                  ].map(({ color, label }) => (
-                    <div key={label} className="flex items-center gap-1.5">
-                      <div className={`w-2.5 h-2.5 rounded-full ${color}`} />
-                      <span className="text-xs text-gray-500 font-body">{label}</span>
-                    </div>
-                  ))}
-                </div>
+            <div className="px-4 sm:px-6 pt-5 pb-3 bg-white flex items-center justify-between flex-wrap gap-2">
+              <div>
+                <h3 className="font-display font-semibold text-gray-900">Global Client Map</h3>
+                <p className="text-xs text-gray-400 font-body mt-0.5">
+                  Click a pin to view clients &amp; prospects at that location
+                </p>
               </div>
-
-              {/* Client detail panel */}
-              <div className="flex-1 bg-white p-7 overflow-y-auto">
-                {globeClient ? (
-                  <GlobeClientPanel
-                    client={globeClient}
-                    surveyType={surveyType}
-                    onClose={() => setGlobeClient(null)}
-                  />
-                ) : (
-                  <div className="h-full flex flex-col items-center justify-center text-center">
-                    <div className="w-16 h-16 rounded-2xl bg-gray-100 flex items-center justify-center mb-4">
-                      <MapPin size={26} className="text-gray-400" />
-                    </div>
-                    <p className="font-display font-semibold text-gray-400 text-lg">No client selected</p>
-                    <p className="text-sm text-gray-500 font-body mt-1.5 max-w-xs">
-                      Click any glowing pin on the globe to view that client's profile and survey results
-                    </p>
-                    <div className="mt-6 grid grid-cols-2 gap-2 w-full max-w-xs">
-                      {clientsData.filter(c => c.status === 'Responded').slice(0, 4).map(c => (
-                        <button
-                          key={c.id}
-                          onClick={() => setGlobeClient(c)}
-                          className="flex items-center gap-2 p-2.5 rounded-[2px] bg-gray-50 hover:bg-gray-100 transition-colors text-left"
-                        >
-                          <div className="w-7 h-7 rounded-full bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center text-[10px] font-bold text-gray-600 shrink-0">
-                            {c.name.split(' ').map(n => n[0]).join('')}
-                          </div>
-                          <div className="min-w-0">
-                            <p className="text-xs font-semibold text-gray-700 font-body truncate">{c.name.split(' ')[0]}</p>
-                            <p className="text-[10px] text-gray-400 font-body truncate">{c.city}</p>
-                          </div>
-                        </button>
-                      ))}
-                    </div>
+              {/* Legend */}
+              <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5">
+                {(isCsat ? [
+                  { color: '#CDDE33', label: 'Satisfied' },
+                  { color: '#F59E0B', label: 'Neutral' },
+                  { color: '#EF4444', label: 'Dissatisfied' },
+                ] : [
+                  { color: '#10B981', label: 'Promoter' },
+                  { color: '#F59E0B', label: 'Passive' },
+                  { color: '#EF4444', label: 'Detractor' },
+                ]).concat([
+                  { color: '#9CA3AF', label: 'No response' },
+                  { color: '#A78BFA', label: 'Prospect' },
+                ]).map(({ color, label }) => (
+                  <div key={label} className="flex items-center gap-1.5">
+                    <div className="w-2.5 h-2.5 rounded-full shrink-0" style={{ background: color }} />
+                    <span className="text-xs text-gray-500 font-body">{label}</span>
                   </div>
-                )}
+                ))}
               </div>
             </div>
+            <MapPanel
+              clients={clientsData}
+              prospects={prospectsData}
+              surveyType={surveyType}
+            />
           </div>
         </motion.div>
 
