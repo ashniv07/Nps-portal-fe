@@ -219,12 +219,12 @@ export const yoyComparisonData = {
 
 // ─── Widget 4 — Action Tracker ───────────────────────────────────────────────
 export const initialActionsData = [
-  { id: 'a1', title: 'Schedule onboarding review call with Global Bank Ltd', account: 'Global Bank Ltd', category: 'Detractors', status: 'Open',        notes: 'James Kalu flagged slow ramp-up. Aim to set call within 2 weeks.',       createdAt: '2024-03-15' },
-  { id: 'a2', title: 'Review support SLA adherence for Innovate Co.',         account: 'Innovate Co.',   category: 'Passives',   status: 'In Progress',  notes: 'Response times exceeding 6h avg. Escalated to support manager.',        createdAt: '2024-03-10' },
-  { id: 'a3', title: 'Send billing transparency summary to Retail Plus',      account: 'Retail Plus',    category: 'Detractors', status: 'Open',        notes: 'Q4 renewal caused confusion. Draft proactive billing summary.',         createdAt: '2024-03-18' },
-  { id: 'a4', title: 'Share export feature roadmap with TechCorp Solutions',  account: 'TechCorp Solutions', category: 'Promoters', status: 'Resolved', notes: 'Shared Q3 export roadmap. Client acknowledged and satisfied.',          createdAt: '2024-02-28' },
-  { id: 'a5', title: 'Mobile UX improvements for Enterprise Corp field team', account: 'Enterprise Corp', category: 'Passives',  status: 'In Progress',  notes: 'Raised with product team. Mobile v2 ETA Q3 2024.',                     createdAt: '2024-03-05' },
-  { id: 'a6', title: 'Conduct QBR with Creative Studio',                      account: 'Creative Studio', category: 'Promoters', status: 'Resolved',   notes: 'QBR completed successfully. Client upgraded to enterprise tier.',        createdAt: '2024-02-15' },
+  { id: 'a1', type: 'Action',    title: 'Schedule onboarding review call with Global Bank Ltd', account: 'Global Bank Ltd',     category: 'Detractors', priority: 'High',   status: 'Open',        notes: 'James Kalu flagged slow ramp-up. Aim to set call within 2 weeks.',    dueDate: '2024-04-01', createdAt: '2024-03-15' },
+  { id: 'a2', type: 'Follow-up', title: 'Review support SLA adherence for Innovate Co.',         account: 'Innovate Co.',        category: 'Passives',   priority: 'High',   status: 'In Progress', notes: 'Response times exceeding 6h avg. Escalated to support manager.',       dueDate: '2024-04-05', createdAt: '2024-03-10' },
+  { id: 'a3', type: 'Action',    title: 'Send billing transparency summary to Retail Plus',      account: 'Retail Plus',         category: 'Detractors', priority: 'Medium', status: 'Open',        notes: 'Q4 renewal caused confusion. Draft proactive billing summary.',        dueDate: '2024-04-10', createdAt: '2024-03-18' },
+  { id: 'a4', type: 'Task',      title: 'Share export feature roadmap with TechCorp Solutions',  account: 'TechCorp Solutions',  category: 'Promoters',  priority: 'Low',    status: 'Resolved',    notes: 'Shared Q3 export roadmap. Client acknowledged and satisfied.',         dueDate: null,         createdAt: '2024-02-28' },
+  { id: 'a5', type: 'Risk',      title: 'Mobile UX improvements for Enterprise Corp field team', account: 'Enterprise Corp',     category: 'Passives',   priority: 'Medium', status: 'In Progress', notes: 'Raised with product team. Mobile v2 ETA Q3 2024.',                    dueDate: '2024-06-30', createdAt: '2024-03-05' },
+  { id: 'a6', type: 'Task',      title: 'Conduct QBR with Creative Studio',                      account: 'Creative Studio',     category: 'Promoters',  priority: 'Low',    status: 'Resolved',    notes: 'QBR completed successfully. Client upgraded to enterprise tier.',       dueDate: null,         createdAt: '2024-02-15' },
 ]
 
 export const clientsData = [
@@ -655,6 +655,44 @@ export const clientsData = [
     feedback: 'Great MVP. Looking forward to seeing how this evolves over the next years.',
     date: '2024-03-12T15:30:00Z',
   },
+  // India — Tata CX Solutions
+  {
+    id: 31, name: 'Arjun Sharma',  email: 'a.sharma@tatacx.in',     company: 'Tata CX Solutions',
+    city: 'Mumbai',    country: 'India',     lat: 19.07,  lng:  72.88,
+    status: 'Responded', nps: 8, csat: 4, feedback: 'Powerful analytics suite that scales well with our enterprise needs.', date: '2024-03-14T08:00:00Z',
+  },
+  {
+    id: 32, name: 'Priya Nair',    email: 'p.nair@tatacx.in',       company: 'Tata CX Solutions',
+    city: 'Mumbai',    country: 'India',     lat: 19.07,  lng:  72.88,
+    status: 'Responded', nps: 9, csat: 5, feedback: 'Best-in-class NPS tooling for enterprise use. Very impressed.', date: '2024-03-14T09:30:00Z',
+  },
+  {
+    id: 33, name: 'Rahul Kapoor',  email: 'r.kapoor@infotrack.in',  company: 'InfoTrack Analytics',
+    city: 'Bangalore', country: 'India',     lat: 12.97,  lng:  77.59,
+    status: 'Sent',      nps: null, csat: null, feedback: null, date: '2024-03-15T07:00:00Z',
+  },
+  // Australia — Pacific CX Group
+  {
+    id: 34, name: 'Olivia Chen',   email: 'o.chen@pacificcx.com.au', company: 'Pacific CX Group',
+    city: 'Sydney',    country: 'Australia', lat: -33.87, lng: 151.21,
+    status: 'Responded', nps: 9, csat: 5, feedback: 'Excellent platform. The insights dashboard is a game changer for our team.', date: '2024-03-12T01:00:00Z',
+  },
+  {
+    id: 35, name: 'Jack Morrison', email: 'j.morrison@pacificcx.com.au', company: 'Pacific CX Group',
+    city: 'Melbourne', country: 'Australia', lat: -37.81, lng: 144.96,
+    status: 'Responded', nps: 8, csat: 4, feedback: 'Very solid reporting and analytics capabilities. Recommend strongly.', date: '2024-03-13T02:30:00Z',
+  },
+  // Ukraine — Kyiv Tech Hub
+  {
+    id: 36, name: 'Olena Kovalenko',    email: 'o.kovalenko@kyivtech.ua', company: 'Kyiv Tech Hub',
+    city: 'Kyiv',      country: 'Ukraine',   lat:  50.45, lng:  30.52,
+    status: 'Responded', nps: 7, csat: 4, feedback: 'Good platform with strong analytics. Would love more localization options.', date: '2024-03-10T10:00:00Z',
+  },
+  {
+    id: 37, name: 'Mykola Bondarenko',  email: 'm.bondarenko@kyivtech.ua', company: 'Kyiv Tech Hub',
+    city: 'Kyiv',      country: 'Ukraine',   lat:  50.45, lng:  30.52,
+    status: 'Pending',   nps: null, csat: null, feedback: null, date: '2024-03-11T11:00:00Z',
+  },
   // Additional Deutsch Analytics users
   {
     id: 29,
@@ -689,16 +727,15 @@ export const clientsData = [
 ]
 
 export const prospectsData = [
-  { id: 'p1', name: 'Aiko Matsumoto',  company: 'Nexus Digital',      city: 'Tokyo',     country: 'Japan',     lat: 35.68, lng: 139.69, industry: 'Technology',  stage: 'Discovery',    email: 'aiko@nexusdigital.jp' },
-  { id: 'p2', name: 'Raj Subramaniam', company: 'FinScale Asia',      city: 'Singapore', country: 'Singapore', lat:  1.35, lng: 103.82, industry: 'Finance',     stage: 'Proposal',     email: 'raj@finscale.sg' },
-  { id: 'p3', name: 'Claire Dupont',   company: 'Lumière Analytics',  city: 'Paris',     country: 'France',    lat: 48.86, lng:   2.35, industry: 'Consulting',  stage: 'Negotiation',  email: 'claire@lumiere.fr' },
-  { id: 'p4', name: 'Noah Tremblay',   company: 'NorthStar Insights', city: 'Toronto',   country: 'Canada',    lat: 43.65, lng: -79.38, industry: 'Healthcare',  stage: 'Discovery',    email: 'noah@northstar.ca' },
-  { id: 'p5', name: 'Laila Hassan',    company: 'Gulf CX Group',      city: 'Dubai',     country: 'UAE',       lat: 25.20, lng:  55.27, industry: 'Retail',      stage: 'Proposal',     email: 'laila@gulfcx.ae' },
-  { id: 'p6', name: 'Pita Havili',     company: 'Pacific Data Co.',   city: 'Sydney',    country: 'Australia', lat: -33.87, lng: 151.21, industry: 'Media',      stage: 'Discovery',    email: 'pita@pacificdata.au' },
-  { id: 'p7', name: 'Fernanda Costa',  company: 'BrasilMetrics',      city: 'São Paulo', country: 'Brazil',    lat: -23.55, lng: -46.63, industry: 'E-commerce', stage: 'Negotiation',  email: 'fernanda@brasilmetrics.com' },
-  { id: 'p8', name: 'Ivan Petrov',     company: 'DataForge EU',       city: 'Berlin',    country: 'Germany',   lat: 52.52, lng:  13.41, industry: 'Analytics',   stage: 'Proposal',     email: 'ivan@dataforge.eu' },
-  { id: 'p9', name: 'Mei Ling',        company: 'ChinaVoice Corp.',   city: 'Shanghai',  country: 'China',     lat: 31.23, lng: 121.47, industry: 'Consumer',    stage: 'Discovery',    email: 'mei@chinavoice.cn' },
-  { id: 'p10', name: 'Carlos Ortega',  company: 'Latam CX Hub',       city: 'New York',  country: 'USA',       lat: 40.71, lng: -74.00, industry: 'Consulting',  stage: 'Proposal',     email: 'carlos@latamcx.com' },
+  { id: 'p1',  name: 'Carlos Ortega',    company: 'Latam CX Hub',        city: 'New York',   country: 'USA',       lat:  40.71, lng:  -74.00, industry: 'Consulting', stage: 'Proposal',    email: 'carlos@latamcx.com' },
+  { id: 'p2',  name: 'Diana Wells',      company: 'NorthWest Analytics', city: 'Chicago',    country: 'USA',       lat:  41.88, lng:  -87.63, industry: 'Healthcare', stage: 'Discovery',   email: 'diana@nwanalytics.com' },
+  { id: 'p3',  name: 'James Hartley',    company: 'BritEdge Solutions',  city: 'Manchester', country: 'UK',        lat:  53.48, lng:   -2.24, industry: 'Finance',    stage: 'Negotiation', email: 'james@britedge.co.uk' },
+  { id: 'p4',  name: 'Pita Havili',      company: 'Pacific Data Co.',    city: 'Sydney',     country: 'Australia', lat: -33.87, lng:  151.21, industry: 'Media',      stage: 'Discovery',   email: 'pita@pacificdata.au' },
+  { id: 'p5',  name: 'Liam Walker',      company: 'Southern Analytics',  city: 'Brisbane',   country: 'Australia', lat: -27.47, lng:  153.02, industry: 'Technology', stage: 'Proposal',    email: 'liam@southernanalytics.au' },
+  { id: 'p6',  name: 'Amit Gupta',       company: 'BrightEdge India',    city: 'Delhi',      country: 'India',     lat:  28.63, lng:   77.22, industry: 'Analytics',  stage: 'Proposal',    email: 'amit@brightedge.in' },
+  { id: 'p7',  name: 'Sneha Pillai',     company: 'Chennai CX Lab',      city: 'Chennai',    country: 'India',     lat:  13.08, lng:   80.27, industry: 'Retail',     stage: 'Discovery',   email: 'sneha@chennaicx.in' },
+  { id: 'p8',  name: 'Darya Petrenko',   company: 'UkraineMetrics',      city: 'Lviv',       country: 'Ukraine',   lat:  49.84, lng:   24.02, industry: 'Finance',    stage: 'Discovery',   email: 'darya@ukrainemetrics.ua' },
+  { id: 'p9',  name: 'Andriy Savchenko', company: 'Odessa Data Hub',     city: 'Odessa',     country: 'Ukraine',   lat:  46.48, lng:   30.72, industry: 'E-commerce', stage: 'Proposal',    email: 'andriy@odessadata.ua' },
 ]
 
 export const historyData = [

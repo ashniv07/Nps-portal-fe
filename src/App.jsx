@@ -7,6 +7,7 @@ import { SurveyTab } from './components/tabs/SurveyTab'
 import { HistoryTab } from './components/tabs/HistoryTab'
 import { AccessTab } from './components/tabs/AccessTab'
 import { ActionsTab } from './components/tabs/ActionsTab'
+import { ChatBot } from './components/ui/ChatBot'
 import { SkeletonCard } from './components/ui/Skeleton'
 import LoginPage from './pages/LoginPage'
 import ClientSurveyPage from './pages/ClientSurveyPage'
@@ -39,9 +40,10 @@ function LoadingState() {
 }
 
 function Dashboard() {
-  const [activeTab, setActiveTab] = useState('analytics')
-  const [loading, setLoading]     = useState(true)
+  const [activeTab, setActiveTab]   = useState('analytics')
+  const [loading, setLoading]       = useState(true)
   const [surveyType, setSurveyType] = useState('nps')
+  const [pendingIssue, setPendingIssue] = useState(null)
   const [role] = useState(() => localStorage.getItem('cprime_role') || 'admin')
 
   if (role !== 'admin') {
@@ -78,16 +80,27 @@ function Dashboard() {
               </motion.div>
             ) : (
               <motion.div key={activeTab} variants={pageVariants} initial="initial" animate="enter" exit="exit">
-                {activeTab === 'analytics' && <AnalyticsTab surveyType={surveyType} />}
+                {activeTab === 'analytics' && (
+                  <AnalyticsTab
+                    surveyType={surveyType}
+                    onCreateIssue={(s) => { setPendingIssue(s); handleTabChange('actions') }}
+                  />
+                )}
                 {activeTab === 'survey'    && <SurveyTab surveyType={surveyType} />}
                 {activeTab === 'history'   && <HistoryTab surveyType={surveyType} />}
-                {activeTab === 'actions'   && <ActionsTab />}
+                {activeTab === 'actions'   && (
+                  <ActionsTab
+                    prefillAction={pendingIssue}
+                    onPrefillConsumed={() => setPendingIssue(null)}
+                  />
+                )}
                 {activeTab === 'settings'  && <AccessTab />}
               </motion.div>
             )}
           </AnimatePresence>
         </div>
       </main>
+      <ChatBot />
     </div>
   )
 }

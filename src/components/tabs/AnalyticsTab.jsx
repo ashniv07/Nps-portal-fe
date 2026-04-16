@@ -1,18 +1,16 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
-  TrendingUp, Send, Users, BarChart2,
-  ThumbsUp, Minus, ThumbsDown,
+  TrendingUp, ThumbsUp, Minus, ThumbsDown,
   ArrowUpRight, Star, SmilePlus, Meh, Frown,
   TrendingDown, ChevronDown, MapPin, X,
 } from 'lucide-react'
 import { Card, CardHeader, CardContent } from '../ui/Card'
-import { Tooltip } from '../ui/Tooltip'
 import { MapPanel } from '../charts/WorldMapChart'
 import { AISuggestionsWidget } from '../widgets/AISuggestionsWidget'
 import { YoYWidget } from '../widgets/YoYWidget'
 import {
-  npsData, csatData, kpiData, csatDistributionData,
+  npsData, csatData, csatDistributionData,
   clientsData, prospectsData, drillDownData,
 } from '../../data/dummyData'
 
@@ -33,28 +31,36 @@ function StatDelta({ value, positive = true }) {
   )
 }
 
-function NpsGauge({ score }) {
+function NpsGaugeDark({ score }) {
   const pct = ((score + 100) / 200) * 100
+  const dash = (pct / 100) * 263.9
   return (
-    <div className="relative w-36 h-36 mx-auto mt-2">
+    <div className="relative w-32 h-32 shrink-0">
       <svg viewBox="0 0 100 100" className="w-full h-full -rotate-90">
-        <circle cx="50" cy="50" r="42" fill="none" stroke="#f3f4f6" strokeWidth="9" />
-        <circle cx="50" cy="50" r="42" fill="none" stroke="url(#npsGauge)" strokeWidth="9"
-          strokeLinecap="round" strokeDasharray={`${(pct / 100) * 263.9} 263.9`} />
+        <circle cx="50" cy="50" r="42" fill="none" stroke="rgba(255,255,255,0.10)" strokeWidth="9" />
+        <motion.circle
+          cx="50" cy="50" r="42" fill="none" stroke="url(#darkGauge)" strokeWidth="9"
+          strokeLinecap="round"
+          initial={{ strokeDasharray: '0 263.9' }}
+          animate={{ strokeDasharray: `${dash} 263.9` }}
+          transition={{ duration: 1.1, delay: 0.3, ease: 'easeOut' }}
+        />
         <defs>
-          <linearGradient id="npsGauge" x1="1" y1="0" x2="0" y2="1">
+          <linearGradient id="darkGauge" x1="1" y1="0" x2="0" y2="1">
             <stop offset="0%" stopColor="#CDDE33" />
             <stop offset="100%" stopColor="#25A28F" />
           </linearGradient>
         </defs>
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center">
-        <span className="font-display font-bold text-4xl text-gray-900 leading-none">{score}</span>
-        <span className="text-xs text-gray-400 font-body mt-1">NPS</span>
+        <span className="font-display font-bold text-3xl text-white leading-none">{score}</span>
+        <span className="text-[10px] text-white/40 font-body mt-1">NPS</span>
       </div>
     </div>
   )
 }
+
+const MAP_COUNTRIES = ['USA', 'UK', 'India', 'Australia', 'Ukraine']
 
 const csatSatisfied    = csatDistributionData.filter((d) => d.label.includes('5') || d.label.includes('4')).reduce((a, b) => a + b.value, 0)
 const csatNeutral      = csatDistributionData.find((d) => d.label.includes('3'))?.value || 0
@@ -282,7 +288,7 @@ function DrillDownPanel({ categoryKey, isCsat, onClose }) {
 }
 
 // ─── Main AnalyticsTab ───────────────────────────────────────────────────────
-export function AnalyticsTab({ surveyType = 'nps' }) {
+export function AnalyticsTab({ surveyType = 'nps', onCreateIssue }) {
   const isCsat           = surveyType === 'csat'
   const [heroExpanded,  setHeroExpanded]  = useState(false)
   const [drillCategory, setDrillCategory] = useState(null)   // 'promoters' | 'passives' | 'detractors'
@@ -296,8 +302,9 @@ export function AnalyticsTab({ surveyType = 'nps' }) {
     setDrillCategory((prev) => (prev === key ? null : key))
   }
 
-  // eslint-disable-next-line no-unused-vars
-  const handleCreateAction = () => {}
+  const handleCreateAction = (suggestion) => {
+    onCreateIssue?.(suggestion)
+  }
 
   // Category card config for NPS and CSAT modes
   const categoryCards = isCsat ? [
@@ -322,11 +329,11 @@ export function AnalyticsTab({ surveyType = 'nps' }) {
           <p className="text-[10px] font-bold font-body uppercase tracking-widest text-gray-400">Widget 1 · NPS/CSAT Results</p>
         </div>
 
-        {/* Hero + KPI */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-5">
+        {/* Hero */}
+        <div className="mb-5">
           {isCsat ? (
             <Card
-              className={`col-span-1 relative overflow-visible cursor-pointer transition-all duration-200 ${heroExpanded ? 'ring-2 ring-neon/50' : 'hover:shadow-card-hover'}`}
+              className={`relative overflow-visible cursor-pointer transition-all duration-200 ${heroExpanded ? 'ring-2 ring-neon/50' : 'hover:shadow-card-hover'}`}
               onClick={handleHeroClick}
             >
               <div className="absolute top-0 right-0 w-32 h-32 bg-neon/8 rounded-full -translate-y-1/2 translate-x-1/2 pointer-events-none" />
@@ -366,82 +373,89 @@ export function AnalyticsTab({ surveyType = 'nps' }) {
               </CardContent>
             </Card>
           ) : (
-            <Card
-              className={`col-span-1 relative overflow-visible cursor-pointer transition-all duration-200 ${heroExpanded ? 'ring-2 ring-neon/50' : 'hover:shadow-card-hover'}`}
+            <div
+              className={`rounded-2xl overflow-hidden cursor-pointer border transition-all duration-200 shadow-card ${
+                heroExpanded ? 'ring-2 ring-neon/50 border-neon/20' : 'border-gray-100 hover:shadow-card-hover'
+              }`}
               onClick={handleHeroClick}
             >
-              <div className="absolute top-0 right-0 w-32 h-32 bg-neon/8 rounded-full -translate-y-1/2 translate-x-1/2 pointer-events-none" />
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-xs font-body text-gray-400 uppercase tracking-wider mb-1">Net Promoter Score</p>
-                    <div className="flex items-center gap-2">
-                      <StatDelta value={`${npsData.change} pts`} />
-                      <span className="text-xs text-gray-400 font-body">vs last quarter</span>
+              {/* Dark header */}
+              <div className="bg-gray-900 px-6 py-5 relative overflow-hidden">
+                {/* Glow orbs */}
+                <div className="absolute -top-8 -right-8 w-36 h-36 bg-neon/10 rounded-full pointer-events-none" />
+                <div className="absolute -bottom-6 -left-6 w-24 h-24 bg-teal/10 rounded-full pointer-events-none" />
+
+                <div className="relative flex items-center gap-5">
+                  <NpsGaugeDark score={npsData.score} />
+
+                  <div className="flex-1 min-w-0">
+                    <p className="text-[10px] font-body text-white/40 uppercase tracking-widest mb-2">Net Promoter Score</p>
+                    <div className="flex items-center gap-2 mb-2 flex-wrap">
+                      <span className="font-display font-bold text-5xl text-white leading-none">{npsData.score}</span>
+                      <span className="text-[11px] bg-neon/20 text-neon px-2.5 py-1 rounded-full font-bold font-body">
+                        Excellent
+                      </span>
                     </div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-[10px] font-body text-gray-400">{heroExpanded ? 'Click to collapse' : 'Click to drill down'}</span>
-                    <div className="p-2 rounded-xl bg-neon/10 text-gray-600">
-                      <ChevronDown size={14} className={`transition-transform duration-200 ${heroExpanded ? 'rotate-180' : ''}`} />
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <StatDelta value={`+${npsData.change} pts`} />
+                      <span className="text-[11px] text-white/30 font-body">vs last quarter</span>
                     </div>
+                    <p className="text-[10px] text-white/25 font-body mt-1.5">Top 15% in industry</p>
                   </div>
                 </div>
-              </CardHeader>
-              <CardContent>
-                <NpsGauge score={npsData.score} />
-                <div className="grid grid-cols-3 gap-3 mt-4 pt-4 border-t border-gray-50">
+              </div>
+
+              {/* White bottom */}
+              <div className="bg-white px-6 py-4">
+                {/* Animated breakdown bars */}
+                <div className="space-y-2.5">
                   {[
-                    { label: 'Promoters', pct: npsData.promoters, color: 'text-emerald-600' },
-                    { label: 'Passives',  pct: npsData.passives,  color: 'text-amber-500' },
-                    { label: 'Detractors',pct: npsData.detractors,color: 'text-rose-500' },
-                  ].map(({ label, pct, color }) => (
-                    <div key={label} className="text-center">
-                      <p className={`text-xl font-bold font-display ${color}`}>{pct}%</p>
-                      <p className="text-[11px] text-gray-400 font-body">{label}</p>
+                    { label: 'Promoters',  pct: npsData.promoters,  bar: 'bg-emerald-500', tc: 'text-emerald-600' },
+                    { label: 'Passives',   pct: npsData.passives,   bar: 'bg-amber-400',   tc: 'text-amber-500' },
+                    { label: 'Detractors', pct: npsData.detractors, bar: 'bg-rose-500',    tc: 'text-rose-500' },
+                  ].map(({ label, pct, bar, tc }) => (
+                    <div key={label}>
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="text-[11px] font-body font-semibold text-gray-600">{label}</span>
+                        <span className={`text-sm font-bold font-display ${tc}`}>{pct}%</span>
+                      </div>
+                      <div className="h-1.5 rounded-full bg-gray-100">
+                        <motion.div
+                          className={`h-1.5 rounded-full ${bar}`}
+                          initial={{ width: 0 }}
+                          animate={{ width: `${pct}%` }}
+                          transition={{ duration: 0.85, delay: 0.4, ease: 'easeOut' }}
+                        />
+                      </div>
                     </div>
                   ))}
                 </div>
-              </CardContent>
-            </Card>
+
+                {/* Stats row */}
+                <div className="grid grid-cols-3 gap-3 mt-4 pt-4 border-t border-gray-50">
+                  {[
+                    { label: 'Surveys Sent',   value: '1,847' },
+                    { label: 'Response Rate',  value: '69.5%' },
+                    { label: 'Active Clients', value: '312' },
+                  ].map(({ label, value }) => (
+                    <div key={label} className="text-center">
+                      <p className="text-base font-bold font-display text-gray-900">{value}</p>
+                      <p className="text-[10px] text-gray-400 font-body mt-0.5">{label}</p>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Click affordance */}
+                <div className="flex items-center justify-center mt-3">
+                  <span className="text-[10px] font-body text-gray-400 flex items-center gap-1">
+                    <ChevronDown size={11} className={`transition-transform duration-200 ${heroExpanded ? 'rotate-180' : ''}`} />
+                    {heroExpanded ? 'Click to collapse' : 'Click to drill down by category'}
+                  </span>
+                </div>
+              </div>
+            </div>
           )}
 
-          {/* KPI mini-cards — always visible */}
-          <div className="grid grid-cols-2 gap-3 sm:gap-4 content-start">
-            <Card className="p-5" hover>
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-blue-500"><Send size={17} /></div>
-                <div>
-                  <p className="text-2xl font-bold font-display text-gray-900">{kpiData.surveysSent.toLocaleString()}</p>
-                  <p className="text-xs text-gray-400 font-body">Surveys Sent</p>
-                </div>
-              </div>
-            </Card>
-            <Card className="p-5" hover>
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-neon/10 flex items-center justify-center text-gray-800"><BarChart2 size={17} /></div>
-                <div>
-                  <p className="text-2xl font-bold font-display text-gray-900">{kpiData.responseRate}%</p>
-                  <p className="text-xs text-gray-400 font-body">Response Rate</p>
-                </div>
-              </div>
-            </Card>
-            <Card className="p-5 col-span-2" hover>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-purple-50 flex items-center justify-center text-purple-500"><Users size={17} /></div>
-                  <div>
-                    <p className="text-2xl font-bold font-display text-gray-900">{kpiData.activeClients}</p>
-                    <p className="text-xs text-gray-400 font-body">Active Clients</p>
-                  </div>
-                </div>
-                <div className="text-right">
-                  <p className="text-2xl font-bold font-display text-gray-900">{kpiData.avgResponseTime}</p>
-                  <p className="text-xs text-gray-400 font-body">Avg Response Time</p>
-                </div>
-              </div>
-            </Card>
-          </div>
         </div>
 
         {/* Category Breakdown — only visible after clicking hero */}
@@ -549,7 +563,11 @@ export function AnalyticsTab({ surveyType = 'nps' }) {
               ))}
             </div>
           </div>
-          <MapPanel clients={clientsData} prospects={prospectsData} surveyType={surveyType} />
+          <MapPanel
+            clients={clientsData.filter(c => MAP_COUNTRIES.includes(c.country))}
+            prospects={prospectsData.filter(p => MAP_COUNTRIES.includes(p.country))}
+            surveyType={surveyType}
+          />
         </div>
       </motion.div>
 

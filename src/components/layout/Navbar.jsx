@@ -24,8 +24,7 @@ export function Navbar({ activeTab, onTabChange, surveyType = 'nps', onSurveyTyp
 
   const navItems = role === 'admin'
     ? [...baseNavItems,
-       { id: 'actions',  label: 'Actions',  icon: ListChecks },
-       { id: 'settings', label: 'Settings', icon: Settings }]
+       { id: 'actions',  label: 'Issues',   icon: ListChecks }]
     : baseNavItems
 
   useEffect(() => {
@@ -199,8 +198,11 @@ export function Navbar({ activeTab, onTabChange, surveyType = 'nps', onSurveyTyp
                     <button className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-body text-gray-700 hover:bg-gray-50 transition-colors text-left">
                       <User size={14} className="text-gray-400" /> Profile Settings
                     </button>
-                    <button className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-body text-gray-700 hover:bg-gray-50 transition-colors text-left">
-                      <Settings size={14} className="text-gray-400" /> Preferences
+                    <button
+                      onClick={() => { handleTabChange('settings'); setProfileOpen(false) }}
+                      className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-body text-gray-700 hover:bg-gray-50 transition-colors text-left"
+                    >
+                      <Settings size={14} className="text-gray-400" /> Settings
                     </button>
                   </div>
                   <div className="border-t border-gray-100 py-1">
