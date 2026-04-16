@@ -4,14 +4,13 @@ import {
   TrendingUp, Send, Users, BarChart2,
   ThumbsUp, Minus, ThumbsDown,
   ArrowUpRight, Star, SmilePlus, Meh, Frown,
-  Tag, TrendingDown, ChevronDown, MapPin, X,
+  TrendingDown, ChevronDown, MapPin, X,
 } from 'lucide-react'
 import { Card, CardHeader, CardContent } from '../ui/Card'
 import { Tooltip } from '../ui/Tooltip'
 import { MapPanel } from '../charts/WorldMapChart'
 import { AISuggestionsWidget } from '../widgets/AISuggestionsWidget'
 import { YoYWidget } from '../widgets/YoYWidget'
-import { ActionTrackerWidget } from '../widgets/ActionTrackerWidget'
 import {
   npsData, csatData, kpiData, csatDistributionData,
   clientsData, prospectsData, drillDownData,
@@ -285,18 +284,20 @@ function DrillDownPanel({ categoryKey, isCsat, onClose }) {
 // ─── Main AnalyticsTab ───────────────────────────────────────────────────────
 export function AnalyticsTab({ surveyType = 'nps' }) {
   const isCsat           = surveyType === 'csat'
+  const [heroExpanded,  setHeroExpanded]  = useState(false)
   const [drillCategory, setDrillCategory] = useState(null)   // 'promoters' | 'passives' | 'detractors'
-  const [actionPrefill,  setActionPrefill]  = useState(null)
+
+  const handleHeroClick = () => {
+    setHeroExpanded((p) => !p)
+    if (heroExpanded) setDrillCategory(null)
+  }
 
   const handleCategoryClick = (key) => {
     setDrillCategory((prev) => (prev === key ? null : key))
   }
 
-  const handleCreateAction = (suggestion) => {
-    setActionPrefill(suggestion)
-    // scroll to action tracker
-    setTimeout(() => document.getElementById('action-tracker')?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100)
-  }
+  // eslint-disable-next-line no-unused-vars
+  const handleCreateAction = () => {}
 
   // Category card config for NPS and CSAT modes
   const categoryCards = isCsat ? [
@@ -324,7 +325,10 @@ export function AnalyticsTab({ surveyType = 'nps' }) {
         {/* Hero + KPI */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-5">
           {isCsat ? (
-            <Card className="col-span-1 relative overflow-visible">
+            <Card
+              className={`col-span-1 relative overflow-visible cursor-pointer transition-all duration-200 ${heroExpanded ? 'ring-2 ring-neon/50' : 'hover:shadow-card-hover'}`}
+              onClick={handleHeroClick}
+            >
               <div className="absolute top-0 right-0 w-32 h-32 bg-neon/8 rounded-full -translate-y-1/2 translate-x-1/2 pointer-events-none" />
               <CardHeader>
                 <div className="flex items-center justify-between">
@@ -335,8 +339,11 @@ export function AnalyticsTab({ surveyType = 'nps' }) {
                       <span className="text-xs text-gray-400 font-body">vs last quarter</span>
                     </div>
                   </div>
-                  <div className="p-2 rounded-xl bg-teal/10 text-teal">
-                    <ArrowUpRight size={16} />
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] font-body text-gray-400">{heroExpanded ? 'Click to collapse' : 'Click to drill down'}</span>
+                    <div className="p-2 rounded-xl bg-teal/10 text-teal">
+                      <ChevronDown size={14} className={`transition-transform duration-200 ${heroExpanded ? 'rotate-180' : ''}`} />
+                    </div>
                   </div>
                 </div>
               </CardHeader>
@@ -359,7 +366,10 @@ export function AnalyticsTab({ surveyType = 'nps' }) {
               </CardContent>
             </Card>
           ) : (
-            <Card className="col-span-1 relative overflow-visible">
+            <Card
+              className={`col-span-1 relative overflow-visible cursor-pointer transition-all duration-200 ${heroExpanded ? 'ring-2 ring-neon/50' : 'hover:shadow-card-hover'}`}
+              onClick={handleHeroClick}
+            >
               <div className="absolute top-0 right-0 w-32 h-32 bg-neon/8 rounded-full -translate-y-1/2 translate-x-1/2 pointer-events-none" />
               <CardHeader>
                 <div className="flex items-center justify-between">
@@ -370,8 +380,11 @@ export function AnalyticsTab({ surveyType = 'nps' }) {
                       <span className="text-xs text-gray-400 font-body">vs last quarter</span>
                     </div>
                   </div>
-                  <div className="p-2 rounded-xl bg-neon/10 text-gray-600">
-                    <ArrowUpRight size={16} />
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] font-body text-gray-400">{heroExpanded ? 'Click to collapse' : 'Click to drill down'}</span>
+                    <div className="p-2 rounded-xl bg-neon/10 text-gray-600">
+                      <ChevronDown size={14} className={`transition-transform duration-200 ${heroExpanded ? 'rotate-180' : ''}`} />
+                    </div>
                   </div>
                 </div>
               </CardHeader>
@@ -393,7 +406,7 @@ export function AnalyticsTab({ surveyType = 'nps' }) {
             </Card>
           )}
 
-          {/* KPI mini-cards */}
+          {/* KPI mini-cards — always visible */}
           <div className="grid grid-cols-2 gap-3 sm:gap-4 content-start">
             <Card className="p-5" hover>
               <div className="flex items-center gap-3">
@@ -431,48 +444,58 @@ export function AnalyticsTab({ surveyType = 'nps' }) {
           </div>
         </div>
 
-        {/* Category Breakdown cards (clickable → drill-down) */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 mb-3">
-          {categoryCards.map(({ key, icon: Icon, label, sublabel, pct, border, color, bar, iconBg }) => (
-            <Card
-              key={key}
-              className={`border-t-4 ${border} cursor-pointer transition-all duration-200 ${
-                drillCategory === key ? 'ring-2 ring-neon/40 shadow-neon' : ''
-              }`}
-              onClick={() => handleCategoryClick(key)}
-            >
-              <CardContent className="pt-5">
-                <div className="flex items-start justify-between mb-3">
-                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${iconBg}`}>
-                    <Icon size={18} />
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <ChevronDown
-                      size={15}
-                      className={`text-gray-300 transition-transform duration-200 ${drillCategory === key ? 'rotate-180 text-neon' : ''}`}
-                    />
-                  </div>
-                </div>
-                <p className={`text-4xl font-bold font-display ${color}`}>{pct}%</p>
-                <p className="font-body font-semibold text-gray-800 mt-1">{label}</p>
-                <p className="text-xs text-gray-400 font-body mt-1">{sublabel}</p>
-                <div className="mt-3 h-1.5 rounded-full bg-gray-100">
-                  <div className={`h-1.5 rounded-full ${bar}`} style={{ width: `${pct}%` }} />
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-
-        {/* Inline Drill-down Panel */}
+        {/* Category Breakdown — only visible after clicking hero */}
         <AnimatePresence>
-          {drillCategory && (
-            <DrillDownPanel
-              key={drillCategory}
-              categoryKey={drillCategory}
-              isCsat={isCsat}
-              onClose={() => setDrillCategory(null)}
-            />
+          {heroExpanded && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
+              className="overflow-hidden"
+            >
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 mb-3 pt-1">
+                {categoryCards.map(({ key, icon: Icon, label, sublabel, pct, border, color, bar, iconBg }) => (
+                  <Card
+                    key={key}
+                    className={`border-t-4 ${border} cursor-pointer transition-all duration-200 ${
+                      drillCategory === key ? 'ring-2 ring-neon/40 shadow-neon' : ''
+                    }`}
+                    onClick={() => handleCategoryClick(key)}
+                  >
+                    <CardContent className="pt-5">
+                      <div className="flex items-start justify-between mb-3">
+                        <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${iconBg}`}>
+                          <Icon size={18} />
+                        </div>
+                        <ChevronDown
+                          size={15}
+                          className={`text-gray-300 transition-transform duration-200 ${drillCategory === key ? 'rotate-180 text-neon' : ''}`}
+                        />
+                      </div>
+                      <p className={`text-4xl font-bold font-display ${color}`}>{pct}%</p>
+                      <p className="font-body font-semibold text-gray-800 mt-1">{label}</p>
+                      <p className="text-xs text-gray-400 font-body mt-1">{sublabel}</p>
+                      <div className="mt-3 h-1.5 rounded-full bg-gray-100">
+                        <div className={`h-1.5 rounded-full ${bar}`} style={{ width: `${pct}%` }} />
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+
+              {/* Inline Drill-down Panel */}
+              <AnimatePresence>
+                {drillCategory && (
+                  <DrillDownPanel
+                    key={drillCategory}
+                    categoryKey={drillCategory}
+                    isCsat={isCsat}
+                    onClose={() => setDrillCategory(null)}
+                  />
+                )}
+              </AnimatePresence>
+            </motion.div>
           )}
         </AnimatePresence>
       </motion.div>
@@ -528,16 +551,6 @@ export function AnalyticsTab({ surveyType = 'nps' }) {
           </div>
           <MapPanel clients={clientsData} prospects={prospectsData} surveyType={surveyType} />
         </div>
-      </motion.div>
-
-      {/* ═══════════════════════════════════════════════════════════
-          WIDGET 4 — Action Tracker
-      ═══════════════════════════════════════════════════════════ */}
-      <motion.div variants={item} id="action-tracker">
-        <div className="mb-2">
-          <p className="text-[10px] font-bold font-body uppercase tracking-widest text-gray-400">Widget 4 · Action Tracker</p>
-        </div>
-        <ActionTrackerWidget prefillAction={actionPrefill} />
       </motion.div>
 
     </motion.div>

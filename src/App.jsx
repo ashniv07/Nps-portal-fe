@@ -6,6 +6,7 @@ import { AnalyticsTab } from './components/tabs/AnalyticsTab'
 import { SurveyTab } from './components/tabs/SurveyTab'
 import { HistoryTab } from './components/tabs/HistoryTab'
 import { AccessTab } from './components/tabs/AccessTab'
+import { ActionsTab } from './components/tabs/ActionsTab'
 import { SkeletonCard } from './components/ui/Skeleton'
 import LoginPage from './pages/LoginPage'
 import ClientSurveyPage from './pages/ClientSurveyPage'
@@ -77,10 +78,11 @@ function Dashboard() {
               </motion.div>
             ) : (
               <motion.div key={activeTab} variants={pageVariants} initial="initial" animate="enter" exit="exit">
-                {activeTab === 'analytics'     && <AnalyticsTab surveyType={surveyType} />}
-                {activeTab === 'survey'        && <SurveyTab surveyType={surveyType} />}
-                {activeTab === 'history'       && <HistoryTab surveyType={surveyType} />}
-                {activeTab === 'client-access' && <AccessTab />}
+                {activeTab === 'analytics' && <AnalyticsTab surveyType={surveyType} />}
+                {activeTab === 'survey'    && <SurveyTab surveyType={surveyType} />}
+                {activeTab === 'history'   && <HistoryTab surveyType={surveyType} />}
+                {activeTab === 'actions'   && <ActionsTab />}
+                {activeTab === 'settings'  && <AccessTab />}
               </motion.div>
             )}
           </AnimatePresence>

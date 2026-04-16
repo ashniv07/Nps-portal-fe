@@ -28,12 +28,23 @@ const CustomTooltip = ({ active, payload, label, mode }) => {
   return null
 }
 
-export function NpsTrendChart({ mode = 'nps' }) {
+export function NpsTrendChart({ mode = 'nps', onMonthClick }) {
   const isCsat = mode === 'csat'
+
+  const handleClick = (data) => {
+    if (onMonthClick && data?.activePayload?.[0]?.payload?.month) {
+      onMonthClick(data.activePayload[0].payload.month)
+    }
+  }
 
   return (
     <ResponsiveContainer width="100%" height={220}>
-      <AreaChart data={npsTrendData} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
+      <AreaChart
+        data={npsTrendData}
+        margin={{ top: 10, right: 10, left: -10, bottom: 0 }}
+        onClick={onMonthClick ? handleClick : undefined}
+        style={{ cursor: onMonthClick ? 'pointer' : 'default' }}
+      >
         <defs>
           <linearGradient id="npsGrad" x1="0" y1="0" x2="0" y2="1">
             <stop offset="5%" stopColor="#0F7E6D" stopOpacity={0.3} />

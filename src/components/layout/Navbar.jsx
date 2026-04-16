@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
-import { Bell, ChevronDown, LogOut, User, Settings, BarChart2, Send, Clock, KeyRound, Menu, X } from 'lucide-react'
+import { Bell, ChevronDown, LogOut, User, Settings, BarChart2, Send, Clock, ListChecks, Menu, X } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 
 const notifications = [
@@ -9,9 +9,9 @@ const notifications = [
 ]
 
 const baseNavItems = [
-  { id: 'analytics',    label: 'Analytics',     icon: BarChart2 },
-  { id: 'survey',       label: 'Survey',        icon: Send },
-  { id: 'history',      label: 'History',       icon: Clock },
+  { id: 'analytics', label: 'Analytics', icon: BarChart2 },
+  { id: 'survey',    label: 'Survey',    icon: Send },
+  { id: 'history',   label: 'History',   icon: Clock },
 ]
 
 export function Navbar({ activeTab, onTabChange, surveyType = 'nps', onSurveyTypeChange, role = 'admin' }) {
@@ -23,7 +23,9 @@ export function Navbar({ activeTab, onTabChange, surveyType = 'nps', onSurveyTyp
   const unread = notifications.filter((n) => n.unread).length
 
   const navItems = role === 'admin'
-    ? [...baseNavItems, { id: 'client-access', label: 'Access', icon: KeyRound }]
+    ? [...baseNavItems,
+       { id: 'actions',  label: 'Actions',  icon: ListChecks },
+       { id: 'settings', label: 'Settings', icon: Settings }]
     : baseNavItems
 
   useEffect(() => {
