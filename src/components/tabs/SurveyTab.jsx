@@ -2,12 +2,13 @@ import { useState, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   Upload, FileSpreadsheet, Send, Bell, Search, Eye, X, CheckCircle2,
-  Calendar, Clock, RefreshCw, Play, ChevronDown, Plus, Trash2,
+  Calendar, Clock, RefreshCw, Play, ChevronDown, Plus, Trash2, Building2, Users, Mail, BarChart2, TrendingUp, Star, ArrowRight, ChevronLeft,
 } from 'lucide-react'
 import { Card, CardHeader, CardContent } from '../ui/Card'
 import { Button } from '../ui/Button'
 import { StatusBadge } from '../ui/Badge'
 import { EmailPreviewModal } from '../modals/EmailPreviewModal'
+import { ReminderEmailModal } from '../modals/ReminderEmailModal'
 import { clientsData } from '../../data/dummyData'
 
 const container = { hidden: {}, show: { transition: { staggerChildren: 0.06 } } }
@@ -253,6 +254,220 @@ function SchedulePanel({ globalSurveyType }) {
   )
 }
 
+// ─── Company Detail Panel ─────────────────────────────────────────────────────
+function CompanyDetailPanel({ company, people, onBack, selected, onTogglePerson, onToggleCompany, onPreviewClient, onRemindClient, onSendNow }) {
+  const [filterMode, setFilterMode] = useState('nps')
+  const isCsat = filterMode === 'csat'
+
+  // Calculate stats
+  const responded = people.filter(p => p.status === 'Responded')
+  const npsScores = responded.filter(p => p.nps != null).map(p => p.nps)
+  const csatScores = responded.filter(p => p.csat != null).map(p => p.csat)
+  const avgNps = npsScores.length ? Math.round(npsScores.reduce((a,b) => a+b,0) / npsScores.length) : null
+  const avgCsat = csatScores.length ? (csatScores.reduce((a,b) => a+b,0) / csatScores.length).toFixed(1) : null
+  const responseRate = people.length ? Math.round((responded.length / people.length) * 100) : 0
+  const promoters = npsScores.filter(s => s >= 9)
+  const passives = npsScores.filter(s => s >= 7 && s < 9)
+  const detractors = npsScores.filter(s => s < 7)
+
+  const companyPeople = people
+  const allCompanyIds = companyPeople.map(p => p.id)
+  const companySelected = allCompanyIds.every(id => selected.includes(id))
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, scale: 0.95 }}
+      animate={{ opacity: 1, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.95 }}
+      transition={{ duration: 0.25 }}
+      className="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto flex flex-col"
+    >
+      {/* Header */}
+      <div className="sticky top-0 bg-white border-b border-gray-100 p-6 flex items-center justify-between shrink-0">
+        <div className="flex items-center gap-3">
+          <button
+            onClick={onBack}
+            className="p-2 rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors"
+          >
+            <ChevronLeft size={20} />
+          </button>
+          <div>
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center text-sm font-bold text-gray-600">
+                {company.split(' ').map((n) => n[0]).join('').slice(0, 2)}
+              </div>
+              <div>
+                <p className="font-display font-semibold text-gray-900 text-lg">{company}</p>
+                <p className="text-xs text-gray-400 font-body">{people.length} contacts</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* NPS/CSAT Toggle */}
+        <div className="flex items-center gap-1 bg-gray-100 rounded-lg p-1">
+          <button
+            onClick={() => setFilterMode('nps')}
+            className={`px-3 py-1.5 rounded-md text-xs font-semibold font-body transition-all ${
+              filterMode === 'nps'
+                ? 'bg-white text-gray-900 shadow-sm'
+                : 'text-gray-600 hover:text-gray-800'
+            }`}
+          >
+            NPS
+          </button>
+          <button
+            onClick={() => setFilterMode('csat')}
+            className={`px-3 py-1.5 rounded-md text-xs font-semibold font-body transition-all ${
+              filterMode === 'csat'
+                ? 'bg-white text-gray-900 shadow-sm'
+                : 'text-gray-600 hover:text-gray-800'
+            }`}
+          >
+            CSAT
+          </button>
+        </div>
+      </div>
+
+      {/* Content */}
+      <div className="flex-1 overflow-y-auto p-6 space-y-6">
+        {/* Executive Summary */}
+        <div>
+          <p className="text-[10px] font-bold font-body uppercase tracking-widest text-gray-400 mb-3">Executive Summary</p>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            {(!isCsat ? [
+              { label: 'Sent', value: people.length, icon: Mail },
+              { label: 'Responded', value: `${responded.length}`, icon: Users },
+              { label: 'Response Rate', value: `${responseRate}%`, icon: BarChart2 },
+              { label: 'NPS Score', value: npsScores.length ? Math.round(((promoters.length - detractors.length) / npsScores.length) * 100) : '—', icon: TrendingUp },
+            ] : [
+              { label: 'No. of Projects', value: people.length, icon: Building2 },
+              { label: 'Surveys Sent', value: people.length, icon: Mail },
+              { label: 'Responses', value: `${responded.length}`, icon: Users },
+              { label: 'Avg CSAT', value: avgCsat ? `${avgCsat}/5` : '—', icon: Star },
+            ]).map(({ label, value, icon: Icon }) => (
+              <div key={label} className="border border-gray-100 rounded-xl p-3 text-center">
+                <div className="flex items-center justify-center mb-1">
+                  <Icon size={12} className="text-gray-400" />
+                </div>
+                <p className="text-lg font-bold font-display text-gray-900">{value}</p>
+                <p className="text-[10px] text-gray-400 font-body">{label}</p>
+              </div>
+            ))}
+          </div>
+
+          {/* NPS Breakdown */}
+          {!isCsat && npsScores.length > 0 && (
+            <div className="border border-gray-100 rounded-xl p-4 mt-3">
+              <p className="text-xs font-semibold font-body text-gray-600 mb-3">NPS Breakdown</p>
+              <div className="space-y-2.5">
+                {[
+                  { label: 'Promoters', count: promoters.length, pct: Math.round((promoters.length / npsScores.length) * 100), color: 'bg-emerald-500', text: 'text-emerald-600' },
+                  { label: 'Passives', count: passives.length, pct: Math.round((passives.length / npsScores.length) * 100), color: 'bg-amber-400', text: 'text-amber-500' },
+                  { label: 'Detractors', count: detractors.length, pct: Math.round((detractors.length / npsScores.length) * 100), color: 'bg-rose-500', text: 'text-rose-500' },
+                ].map(({ label, count, pct, color, text }) => (
+                  <div key={label} className="flex items-center gap-3">
+                    <span className="text-xs font-body text-gray-500 w-20 shrink-0">{label}</span>
+                    <div className="flex-1 h-2 rounded-full bg-gray-100">
+                      <motion.div
+                        className={`h-2 rounded-full ${color}`}
+                        initial={{ width: 0 }}
+                        animate={{ width: `${pct}%` }}
+                        transition={{ duration: 0.6, ease: 'easeOut' }}
+                      />
+                    </div>
+                    <span className={`text-xs font-bold font-display w-12 text-right ${text}`}>{count} ({pct}%)</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Contacts */}
+        <div>
+          <div className="flex items-center justify-between mb-3">
+            <p className="text-[10px] font-bold font-body uppercase tracking-widest text-gray-400">Contacts</p>
+            <div className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                checked={companySelected}
+                onChange={() => onToggleCompany(company)}
+                className="rounded accent-gray-900 w-3.5 h-3.5 cursor-pointer"
+                title="Select all contacts"
+              />
+              {companySelected && (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  className="flex items-center gap-2"
+                >
+                  <span className="text-xs text-gray-500 font-body">{allCompanyIds.filter(id => selected.includes(id)).length} selected</span>
+                  <Button variant="primary" size="sm" icon={<Play size={13} />} onClick={() => onSendNow(people.filter(p => selected.includes(p.id)))}>
+                    Send Now
+                  </Button>
+                  <Button variant="secondary" size="sm" icon={<Bell size={13} />} onClick={() => onRemindClient(people[0])}>
+                    Remind
+                  </Button>
+                </motion.div>
+              )}
+            </div>
+          </div>
+          <div className="space-y-2 max-h-96 overflow-y-auto">
+            {people.map(person => (
+              <div key={person.id} className="p-3 rounded-xl border border-gray-100 hover:bg-gray-50 transition-colors">
+                <div className="flex items-start gap-3">
+                  <input
+                    type="checkbox"
+                    checked={selected.includes(person.id)}
+                    onChange={() => onTogglePerson(person.id)}
+                    className="rounded accent-gray-900 w-3.5 h-3.5 cursor-pointer mt-1"
+                  />
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center text-xs font-bold text-gray-600 shrink-0">
+                    {person.name.split(' ').map((n) => n[0]).join('')}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="text-sm font-semibold font-body text-gray-800">{person.name}</span>
+                      {person.status !== 'Pending' && <StatusBadge status={person.status} />}
+                    </div>
+                    <p className="text-xs text-gray-400 font-body flex items-center gap-1 mt-0.5">
+                      <Mail size={9} />{person.email}
+                    </p>
+                  </div>
+                  <div className="shrink-0 flex items-center gap-1.5">
+                    <button
+                      onClick={() => onPreviewClient(person)}
+                      className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors"
+                      title="Preview email"
+                    >
+                      <Eye size={14} />
+                    </button>
+                    <button
+                      onClick={() => onSendNow([person])}
+                      className="p-1.5 rounded-lg hover:bg-neon/10 text-gray-400 hover:text-yellow-700 transition-colors"
+                      title="Send survey now"
+                    >
+                      <Play size={14} />
+                    </button>
+                    <button
+                      onClick={() => onRemindClient(person)}
+                      className="p-1.5 rounded-lg hover:bg-amber-50 text-gray-400 hover:text-amber-600 transition-colors"
+                      title="Send reminder"
+                    >
+                      <Bell size={14} />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </motion.div>
+  )
+}
+
 // ─── File Dropzone ────────────────────────────────────────────────────────────
 function FileDropzone() {
   const [dragging, setDragging] = useState(false)
@@ -318,11 +533,15 @@ function FileDropzone() {
 
 // ─── Main SurveyTab ───────────────────────────────────────────────────────────
 export function SurveyTab({ surveyType: defaultType = 'nps' }) {
+  const [filterMode, setFilterMode] = useState(defaultType)
+  const isCsat = filterMode === 'csat'
   const [globalSurveyType, setGlobalSurveyType] = useState('NPS')
   const [search, setSearch] = useState('')
   const [selected, setSelected] = useState([])
   const [previewClient, setPreviewClient] = useState(null)
+  const [reminderClient, setReminderClient] = useState(null)
   const [showSendNow, setShowSendNow] = useState(false)
+  const [selectedCompany, setSelectedCompany] = useState(null)
 
   const filtered = clientsData.filter(
     (c) =>
@@ -331,8 +550,34 @@ export function SurveyTab({ surveyType: defaultType = 'nps' }) {
       c.company.toLowerCase().includes(search.toLowerCase())
   )
 
+  // Group by company
+  const groupedByCompany = filtered.reduce((acc, client) => {
+    if (!acc[client.company]) {
+      acc[client.company] = []
+    }
+    acc[client.company].push(client)
+    return acc
+  }, {})
+
+  const companies = Object.entries(groupedByCompany).map(([name, people]) => ({
+    name,
+    people,
+  }))
+
   const toggleSelect = (id) =>
     setSelected((prev) => prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id])
+  
+  const toggleSelectCompany = (companyName) => {
+    const companyPeople = groupedByCompany[companyName] || []
+    const allCompanyIds = companyPeople.map(p => p.id)
+    const allSelected = allCompanyIds.every(id => selected.includes(id))
+    if (allSelected) {
+      setSelected(prev => prev.filter(id => !allCompanyIds.includes(id)))
+    } else {
+      setSelected(prev => [...new Set([...prev, ...allCompanyIds])])
+    }
+  }
+
   const toggleAll = () =>
     setSelected(selected.length === filtered.length ? [] : filtered.map((c) => c.id))
 
@@ -380,7 +625,7 @@ export function SurveyTab({ surveyType: defaultType = 'nps' }) {
           <SchedulePanel globalSurveyType={globalSurveyType} />
         </motion.div>
 
-        {/* ── Client List ────────────────────────────────────────── */}
+        {/* ── Client List (Grouped by Company) ────────────────────────────────────────── */}
         <motion.div variants={item}>
           <Card hover={false}>
             <CardHeader>
@@ -388,11 +633,35 @@ export function SurveyTab({ surveyType: defaultType = 'nps' }) {
                 <div>
                   <h2 className="font-display font-semibold text-gray-900">Client List</h2>
                   <p className="text-xs text-gray-400 font-body mt-0.5">
-                    {clientsData.length} contacts · {clientsData.filter((c) => c.status === 'Responded').length} responded
+                    {companies.length} companies · {filtered.length} contacts
                   </p>
                 </div>
 
                 <div className="flex items-center gap-3 flex-wrap">
+                  {/* NPS/CSAT Toggle */}
+                  <div className="flex items-center gap-1 bg-gray-100 rounded-lg p-1">
+                    <button
+                      onClick={() => setFilterMode('nps')}
+                      className={`px-3 py-1.5 rounded-md text-xs font-semibold font-body transition-all ${
+                        filterMode === 'nps'
+                          ? 'bg-white text-gray-900 shadow-sm'
+                          : 'text-gray-600 hover:text-gray-800'
+                      }`}
+                    >
+                      NPS
+                    </button>
+                    <button
+                      onClick={() => setFilterMode('csat')}
+                      className={`px-3 py-1.5 rounded-md text-xs font-semibold font-body transition-all ${
+                        filterMode === 'csat'
+                          ? 'bg-white text-gray-900 shadow-sm'
+                          : 'text-gray-600 hover:text-gray-800'
+                      }`}
+                    >
+                      CSAT
+                    </button>
+                  </div>
+
                   {selected.length > 0 && (
                     <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="flex items-center gap-2">
                       <span className="text-xs text-gray-500 font-body">{selected.length} selected</span>
@@ -419,121 +688,126 @@ export function SurveyTab({ surveyType: defaultType = 'nps' }) {
             </CardHeader>
 
             <CardContent className="pt-0 overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="border-b border-gray-100">
-                    <th className="pb-3 pr-4 text-left">
-                      <input
-                        type="checkbox"
-                        checked={selected.length === filtered.length && filtered.length > 0}
-                        onChange={toggleAll}
-                        className="rounded accent-gray-900 w-3.5 h-3.5 cursor-pointer"
-                      />
-                    </th>
-                    {['Name', 'Email', 'Company', 'Status', 'Actions'].map((h) => (
-                      <th key={h} className="pb-3 pr-4 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider font-body">
-                        {h}
-                      </th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  <AnimatePresence>
-                    {filtered.length === 0 ? (
-                      <tr>
-                        <td colSpan={6} className="py-12 text-center">
-                          <div className="flex flex-col items-center gap-2">
-                            <Search size={28} className="text-gray-200" />
-                            <p className="text-sm text-gray-400 font-body">No clients match your search</p>
-                          </div>
-                        </td>
-                      </tr>
-                    ) : (
-                      filtered.map((client, idx) => (
-                        <motion.tr
-                          key={client.id}
-                          initial={{ opacity: 0 }}
-                          animate={{ opacity: 1 }}
-                          exit={{ opacity: 0 }}
-                          transition={{ delay: idx * 0.03 }}
-                          className={`border-b border-gray-50 last:border-0 hover:bg-gray-50/60 transition-colors group ${
-                            selected.includes(client.id) ? 'bg-neon/4' : ''
-                          }`}
+              {companies.length === 0 ? (
+                <div className="py-12 text-center">
+                  <div className="flex flex-col items-center gap-2">
+                    <Search size={28} className="text-gray-200" />
+                    <p className="text-sm text-gray-400 font-body">No companies match your search</p>
+                  </div>
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  {companies.map((company) => {
+                    const companyPeople = company.people
+                    const allCompanyIds = companyPeople.map(p => p.id)
+                    const companySelected = allCompanyIds.every(id => selected.includes(id))
+                    const responded = companyPeople.filter(p => p.status === 'Responded').length
+
+                    return (
+                      <motion.div
+                        key={company.name}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.25 }}
+                        className="border border-gray-100 rounded-lg hover:border-neon/30 hover:bg-gray-50/50 transition-all group cursor-pointer"
+                      >
+                        <button
+                          onClick={() => setSelectedCompany(company.name)}
+                          className="w-full text-left p-4 flex items-center gap-3 justify-between"
                         >
-                          <td className="py-3.5 pr-4">
+                          <div className="flex items-center gap-3 flex-1">
                             <input
                               type="checkbox"
-                              checked={selected.includes(client.id)}
-                              onChange={() => toggleSelect(client.id)}
+                              checked={companySelected}
+                              onChange={() => toggleSelectCompany(company.name)}
+                              onClick={(e) => e.stopPropagation()}
                               className="rounded accent-gray-900 w-3.5 h-3.5 cursor-pointer"
                             />
-                          </td>
-                          <td className="py-3.5 pr-4">
-                            <div className="flex items-center gap-2.5">
-                              <div className="w-7 h-7 rounded-full bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center text-xs font-bold text-gray-600">
-                                {client.name.split(' ').map((n) => n[0]).join('')}
-                              </div>
-                              <span className="text-sm font-body font-medium text-gray-800 whitespace-nowrap">{client.name}</span>
+                            <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center text-xs font-bold text-gray-600 shrink-0">
+                              {company.name.split(' ').map((n) => n[0]).join('').slice(0, 2)}
                             </div>
-                          </td>
-                          <td className="py-3.5 pr-4">
-                            <span className="text-sm text-gray-500 font-body">{client.email}</span>
-                          </td>
-                          <td className="py-3.5 pr-4">
-                            <span className="text-sm font-body text-gray-700 font-medium">{client.company}</span>
-                          </td>
-                          <td className="py-3.5 pr-4">
-                            <StatusBadge status={client.status} />
-                          </td>
-                          <td className="py-3.5">
-                            <div className="flex items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
-                              <button
-                                onClick={() => setPreviewClient(client)}
-                                className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors"
-                                title="Preview email"
-                              >
-                                <Eye size={14} />
-                              </button>
-                              <button
-                                onClick={() => { setSelected([client.id]); setShowSendNow(true) }}
-                                className="p-1.5 rounded-lg hover:bg-neon/10 text-gray-400 hover:text-yellow-700 transition-colors"
-                                title="Send survey now"
-                              >
-                                <Play size={14} />
-                              </button>
-                              <button
-                                className="p-1.5 rounded-lg hover:bg-blue-50 text-gray-400 hover:text-blue-500 transition-colors"
-                                title="Send reminder"
-                              >
-                                <Bell size={14} />
-                              </button>
+                            <div className="flex-1">
+                              <p className="text-sm font-semibold font-body text-gray-800">{company.name}</p>
+                              <p className="text-xs text-gray-400 font-body mt-0.5">
+                                {companyPeople.length} contacts · {responded} responded
+                              </p>
                             </div>
-                          </td>
-                        </motion.tr>
-                      ))
-                    )}
-                  </AnimatePresence>
-                </tbody>
-              </table>
+                          </div>
+                          <ArrowRight size={14} className="text-gray-300 group-hover:text-neon transition-colors" />
+                        </button>
+                      </motion.div>
+                    )
+                  })}
+                </div>
+              )}
             </CardContent>
           </Card>
         </motion.div>
 
       </motion.div>
 
+      {/* ── Company Detail View ────────────────────────────────────── */}
+      <AnimatePresence>
+        {selectedCompany && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4"
+            onClick={() => setSelectedCompany(null)}
+          />
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {selectedCompany && (
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center p-4"
+            onClick={(e) => {
+              if (e.target === e.currentTarget) setSelectedCompany(null)
+            }}
+          >
+            <CompanyDetailPanel
+              company={selectedCompany}
+              people={groupedByCompany[selectedCompany] || []}
+              onBack={() => setSelectedCompany(null)}
+              selected={selected}
+              onTogglePerson={toggleSelect}
+              onToggleCompany={toggleSelectCompany}
+              onPreviewClient={setPreviewClient}
+              onRemindClient={setReminderClient}
+              onSendNow={(people) => {
+                if (people.length > 0) {
+                  setSelected(people.map(p => p.id))
+                  setShowSendNow(true)
+                }
+              }}
+            />
+          </div>
+        )}
+      </AnimatePresence>
+
       {/* ── Modals ─────────────────────────────────────────────── */}
       <EmailPreviewModal
         isOpen={!!previewClient}
         onClose={() => setPreviewClient(null)}
         client={previewClient}
-        surveyType={defaultType}
+        surveyType={filterMode}
+      />
+
+      <ReminderEmailModal
+        isOpen={!!reminderClient}
+        onClose={() => setReminderClient(null)}
+        client={reminderClient}
+        surveyType={filterMode}
       />
 
       <AnimatePresence>
         {showSendNow && (
           <SendNowModal
             isOpen={showSendNow}
-            surveyType={globalSurveyType}
+            surveyType={filterMode === 'nps' ? 'NPS' : 'CSAT'}
             clientCount={targetCount}
             onConfirm={handleSendNow}
             onClose={() => setShowSendNow(false)}

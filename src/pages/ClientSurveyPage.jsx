@@ -15,7 +15,7 @@ const surveyQuestions = [
     type: 'text',
     question: 'What is the main reason for your score?',
     placeholder: 'Share your thoughts...',
-  },
+  }, 
   {
     id: 3,
     type: 'csat',

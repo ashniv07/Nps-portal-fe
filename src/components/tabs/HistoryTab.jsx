@@ -207,14 +207,17 @@ function CampaignDetailPanel({ campaign, isCsat, onBack, onSelectClient }) {
 
         {/* Key stats */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-3">
-          {[
+          {(!isCsat ? [
             { label: 'Sent', value: campaign.totalSent, icon: Mail },
             { label: 'Responded', value: `${stats.responded.length}`, icon: Users },
             { label: 'Response Rate', value: `${stats.responseRate}%`, icon: BarChart2 },
-            isCsat
-              ? { label: 'Avg CSAT', value: stats.avgCsat ? `${stats.avgCsat}/5` : '—', icon: Star }
-              : { label: 'NPS Score', value: stats.computedNps, icon: TrendingUp },
-          ].map(({ label, value, icon: Icon }) => (
+            { label: 'NPS Score', value: stats.computedNps, icon: TrendingUp },
+          ] : [
+            { label: 'No. of Projects', value: campaign.clients.length, icon: Building2 },
+            { label: 'No. of Surveys', value: campaign.totalSent, icon: BarChart2 },
+            { label: 'Responses', value: `${stats.responded.length}`, icon: Users },
+            { label: 'Avg CSAT', value: stats.avgCsat ? `${stats.avgCsat}/5` : '—', icon: Star },
+          ]).map(({ label, value, icon: Icon }) => (
             <div key={label} className="border border-gray-100 rounded-xl p-3 text-center">
               <div className="flex items-center justify-center mb-1">
                 <Icon size={12} className="text-gray-400" />
@@ -307,15 +310,26 @@ function CampaignDetailPanel({ campaign, isCsat, onBack, onSelectClient }) {
                 </div>
                 <div className="flex items-center gap-3 shrink-0">
                   <div className="text-right hidden sm:block">
-                    <p className="text-xs text-gray-400 font-body">{cResponded.length}/{cRespondents.length} responded</p>
-                    {isCsat && avgCsat ? (
-                      <p className="text-xs font-bold font-display text-teal">{avgCsat}/5</p>
-                    ) : avgNps != null ? (
-                      <p className={`text-xs font-bold font-display ${avgNps >= 9 ? 'text-emerald-600' : avgNps >= 7 ? 'text-amber-500' : 'text-rose-500'}`}>
-                        NPS {avgNps}
-                      </p>
+                    {isCsat ? (
+                      <>
+                        <p className="text-xs text-gray-400 font-body">{cResponded.length} surveys</p>
+                        {avgCsat ? (
+                          <p className="text-xs font-bold font-display text-teal">{avgCsat}/5</p>
+                        ) : (
+                          <p className="text-xs text-gray-400 font-body">No scores</p>
+                        )}
+                      </>
                     ) : (
-                      <p className="text-xs text-gray-400 font-body">No scores</p>
+                      <>
+                        <p className="text-xs text-gray-400 font-body">{cResponded.length}/{cRespondents.length} responded</p>
+                        {avgNps != null ? (
+                          <p className={`text-xs font-bold font-display ${avgNps >= 9 ? 'text-emerald-600' : avgNps >= 7 ? 'text-amber-500' : 'text-rose-500'}`}>
+                            NPS {avgNps}
+                          </p>
+                        ) : (
+                          <p className="text-xs text-gray-400 font-body">No scores</p>
+                        )}
+                      </>
                     )}
                   </div>
                   <ArrowRight size={13} className="text-gray-300 group-hover:text-neon transition-colors" />
@@ -383,7 +397,8 @@ function CampaignCard({ campaign, isCsat, isSelected, onClick }) {
 
 // ─── Main HistoryTab ─────────────────────────────────────────────────────────
 export function HistoryTab({ surveyType = 'nps' }) {
-  const isCsat = surveyType === 'csat'
+  const [filterMode, setFilterMode] = useState(surveyType)
+  const isCsat = filterMode === 'csat'
   const [selectedCampaign, setSelectedCampaign] = useState(null)
   const [selectedClient,   setSelectedClient]   = useState(null)
   const [dateFrom,  setDateFrom]  = useState('')
@@ -432,7 +447,31 @@ export function HistoryTab({ surveyType = 'nps' }) {
             {filtered.length} campaigns · {filtered.reduce((s, c) => s + c.clients.length, 0)} clients
           </p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
+          {/* NPS/CSAT Toggle */}
+          <div className="flex items-center gap-1 bg-gray-100 rounded-lg p-1">
+            <button
+              onClick={() => setFilterMode('nps')}
+              className={`px-3 py-1.5 rounded-md text-xs font-semibold font-body transition-all ${
+                filterMode === 'nps'
+                  ? 'bg-white text-gray-900 shadow-sm'
+                  : 'text-gray-600 hover:text-gray-800'
+              }`}
+            >
+              NPS
+            </button>
+            <button
+              onClick={() => setFilterMode('csat')}
+              className={`px-3 py-1.5 rounded-md text-xs font-semibold font-body transition-all ${
+                filterMode === 'csat'
+                  ? 'bg-white text-gray-900 shadow-sm'
+                  : 'text-gray-600 hover:text-gray-800'
+              }`}
+            >
+              CSAT
+            </button>
+          </div>
+          
           {hasFilters && (
             <button onClick={clearFilters} className="text-sm text-rose-500 hover:text-rose-700 font-body flex items-center gap-1 transition-colors">
               <X size={13} /> Clear

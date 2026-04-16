@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import {
   TrendingUp, ThumbsUp, Minus, ThumbsDown,
   ArrowUpRight, Star, SmilePlus, Meh, Frown,
-  TrendingDown, ChevronDown, MapPin, X,
+  TrendingDown, ChevronDown, MapPin, X, Filter,
 } from 'lucide-react'
 import { Card, CardHeader, CardContent } from '../ui/Card'
 import { MapPanel } from '../charts/WorldMapChart'
@@ -292,6 +292,8 @@ export function AnalyticsTab({ surveyType = 'nps', onCreateIssue }) {
   const isCsat           = surveyType === 'csat'
   const [heroExpanded,  setHeroExpanded]  = useState(false)
   const [drillCategory, setDrillCategory] = useState(null)   // 'promoters' | 'passives' | 'detractors'
+  const [selectedFilter, setSelectedFilter] = useState(null)  // 'service' | 'industry' | 'practice' | null
+  const [filterDropdownOpen, setFilterDropdownOpen] = useState(false)
 
   const handleHeroClick = () => {
     setHeroExpanded((p) => !p)
@@ -324,9 +326,57 @@ export function AnalyticsTab({ surveyType = 'nps', onCreateIssue }) {
           WIDGET 1 — NPS / CSAT Results with Drill-down
       ═══════════════════════════════════════════════════════════ */}
       <motion.div variants={item}>
-        {/* Section label */}
-        <div className="flex items-center gap-2 mb-3">
-          <p className="text-[10px] font-bold font-body uppercase tracking-widest text-gray-400">Widget 1 · NPS/CSAT Results</p>
+        {/* Section label with dropdown filter */}
+        <div className="flex items-center justify-between mb-3">
+          <p className="text-[10px] font-bold font-body uppercase tracking-widest text-gray-400">NPS/CSAT Results</p>
+          <div className="relative">
+            <button
+              onClick={() => setFilterDropdownOpen(!filterDropdownOpen)}
+              className="flex items-center gap-2 text-xs font-body font-semibold px-3 py-1.5 rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200 transition-all"
+            >
+              <Filter size={14} />
+              {selectedFilter ? selectedFilter.charAt(0).toUpperCase() + selectedFilter.slice(1) : 'Filter'}
+              <ChevronDown size={14} className={`transition-transform duration-200 ${filterDropdownOpen ? 'rotate-180' : ''}`} />
+            </button>
+            
+            {/* Dropdown Menu */}
+            <AnimatePresence>
+              {filterDropdownOpen && (
+                <motion.div
+                  initial={{ opacity: 0, y: -8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -8 }}
+                  transition={{ duration: 0.15 }}
+                  className="absolute right-0 mt-2 w-48 bg-white border border-gray-100 rounded-lg shadow-card z-10"
+                >
+                  {['service', 'industry', 'practice'].map((filterName, index) => (
+                    <button
+                      key={filterName}
+                      onClick={() => {
+                        setSelectedFilter(selectedFilter === filterName ? null : filterName)
+                      }}
+                      className={`w-full text-left px-4 py-2.5 text-xs font-body font-semibold transition-all flex items-center gap-2 ${
+                        selectedFilter === filterName
+                          ? 'bg-neon/10 text-neon'
+                          : 'text-gray-700 hover:bg-gray-50'
+                      } ${index < 2 ? 'border-b border-gray-50' : ''}`}
+                    >
+                      <div className={`w-3.5 h-3.5 rounded-full border-2 flex items-center justify-center transition-all ${
+                        selectedFilter === filterName
+                          ? 'bg-neon border-neon'
+                          : 'border-gray-300'
+                      }`}>
+                        {selectedFilter === filterName && (
+                          <div className="w-1.5 h-1.5 bg-gray-900 rounded-full" />
+                        )}
+                      </div>
+                      {filterName.charAt(0).toUpperCase() + filterName.slice(1)}
+                    </button>
+                  ))}
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
         </div>
 
         {/* Hero */}

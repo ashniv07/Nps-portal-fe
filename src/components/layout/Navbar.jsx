@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { Bell, ChevronDown, LogOut, User, Settings, BarChart2, Send, Clock, ListChecks, Menu, X } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { CPrimeLogo } from '../common/CPrimeLogo'
 
 const notifications = [
   { id: 1, text: 'New response from TechCorp Solutions', time: '2m ago', unread: true },
@@ -50,9 +51,9 @@ export function Navbar({ activeTab, onTabChange, surveyType = 'nps', onSurveyTyp
       <div className="bg-white/92 backdrop-blur-lg border border-gray-200/70 shadow-[0_4px_32px_rgba(0,0,0,0.10)] rounded-full px-4 sm:px-5 h-13 sm:h-14 flex items-center gap-2 sm:gap-3">
 
         {/* Brand */}
-        <span className="font-display font-bold text-gray-900 text-sm sm:text-base tracking-tight shrink-0 select-none">
-          CPRIME
-        </span>
+        <div className="flex items-center shrink-0">
+          <CPrimeLogo size="sm" showText={false} link={false} />
+        </div>
 
         {/* Divider — only when nav is visible */}
         <div className="hidden lg:block w-px h-5 bg-gray-200 shrink-0" />
