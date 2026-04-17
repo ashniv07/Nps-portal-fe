@@ -638,30 +638,6 @@ export function SurveyTab({ surveyType: defaultType = 'nps' }) {
                 </div>
 
                 <div className="flex items-center gap-3 flex-wrap">
-                  {/* NPS/CSAT Toggle */}
-                  <div className="flex items-center gap-1 bg-gray-100 rounded-lg p-1">
-                    <button
-                      onClick={() => setFilterMode('nps')}
-                      className={`px-3 py-1.5 rounded-md text-xs font-semibold font-body transition-all ${
-                        filterMode === 'nps'
-                          ? 'bg-white text-gray-900 shadow-sm'
-                          : 'text-gray-600 hover:text-gray-800'
-                      }`}
-                    >
-                      NPS
-                    </button>
-                    <button
-                      onClick={() => setFilterMode('csat')}
-                      className={`px-3 py-1.5 rounded-md text-xs font-semibold font-body transition-all ${
-                        filterMode === 'csat'
-                          ? 'bg-white text-gray-900 shadow-sm'
-                          : 'text-gray-600 hover:text-gray-800'
-                      }`}
-                    >
-                      CSAT
-                    </button>
-                  </div>
-
                   {selected.length > 0 && (
                     <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="flex items-center gap-2">
                       <span className="text-xs text-gray-500 font-body">{selected.length} selected</span>
