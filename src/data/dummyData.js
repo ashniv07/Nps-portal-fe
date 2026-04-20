@@ -227,6 +227,30 @@ export const initialActionsData = [
   { id: 'a6', type: 'Task',      title: 'Conduct QBR with Creative Studio',                      account: 'Creative Studio',     category: 'Promoters',  priority: 'Low',    status: 'Resolved',    notes: 'QBR completed successfully. Client upgraded to enterprise tier.',       dueDate: null,         createdAt: '2024-02-15' },
 ]
 
+// ─── Regional Hierarchy for Map Drill-down ──────────────────────────────────
+export const regionHierarchy = {
+  regions: [
+    { id: 'na', name: 'North America', lat: 45, lng: -95, nps: 75, color: 'bg-emerald-500' },
+    { id: 'emea', name: 'Europe, Middle East & Africa', lat: 54, lng: 8, nps: 68, color: 'bg-amber-400' },
+    { id: 'apac', name: 'Asia Pacific', lat: 34, lng: 100, nps: 72, color: 'bg-emerald-500' },
+  ],
+  subregions: {
+    na: [
+      { id: 'us-east', name: 'US East', lat: 40.71, lng: -74.00, nps: 74, clientCount: 4 },
+      { id: 'us-west', name: 'US West', lat: 37.77, lng: -122.42, nps: 76, clientCount: 5 },
+    ],
+    emea: [
+      { id: 'uk-ie', name: 'UK & Ireland', lat: 51.51, lng: -0.13, nps: 70, clientCount: 3 },
+      { id: 'eu', name: 'Continental Europe', lat: 52.52, lng: 13.41, nps: 67, clientCount: 4 },
+      { id: 'mea', name: 'Middle East & Africa', lat: 6.52, lng: 3.38, nps: 65, clientCount: 1 },
+    ],
+    apac: [
+      { id: 'india', name: 'India', lat: 19.07, lng: 72.88, nps: 74, clientCount: 2 },
+      { id: 'sea', name: 'Southeast Asia', lat: -33.87, lng: 151.21, nps: 70, clientCount: 2 },
+    ],
+  },
+}
+
 export const clientsData = [
   {
     id: 1,
@@ -242,6 +266,8 @@ export const clientsData = [
     csat: 5,
     feedback: 'The platform has transformed how we gather customer insights. Absolutely love the analytics.',
     date: '2024-03-15T10:32:00Z',
+    region: 'na',
+    subregion: 'us-west',
   },
   {
     id: 2,
@@ -257,6 +283,8 @@ export const clientsData = [
     csat: null,
     feedback: null,
     date: '2024-03-14T09:15:00Z',
+    region: 'na',
+    subregion: 'us-east',
   },
   {
     id: 3,
@@ -272,6 +300,8 @@ export const clientsData = [
     csat: 4,
     feedback: 'Good overall experience, though the export feature could use some improvements.',
     date: '2024-03-13T14:20:00Z',
+    region: 'emea',
+    subregion: 'uk-ie',
   },
   {
     id: 4,
@@ -287,6 +317,8 @@ export const clientsData = [
     csat: null,
     feedback: null,
     date: '2024-03-13T11:00:00Z',
+    region: 'emea',
+    subregion: 'uk-ie',
   },
   {
     id: 5,
@@ -302,6 +334,8 @@ export const clientsData = [
     csat: 5,
     feedback: 'Exceptional product! The team has been incredibly responsive and the features keep getting better.',
     date: '2024-03-12T16:45:00Z',
+    region: 'emea',
+    subregion: 'eu',
   },
   {
     id: 6,
@@ -317,6 +351,8 @@ export const clientsData = [
     csat: null,
     feedback: null,
     date: '2024-03-12T08:30:00Z',
+    region: 'apac',
+    subregion: 'sea',
   },
   {
     id: 7,
@@ -332,6 +368,8 @@ export const clientsData = [
     csat: 3,
     feedback: 'Average experience. Had some issues with the onboarding process.',
     date: '2024-03-11T13:10:00Z',
+    region: 'emea',
+    subregion: 'mea',
   },
   {
     id: 8,
@@ -347,6 +385,8 @@ export const clientsData = [
     csat: 4,
     feedback: 'Very solid platform. The NPS tracking capabilities are exactly what we needed.',
     date: '2024-03-10T10:55:00Z',
+    region: 'emea',
+    subregion: 'eu',
   },
   // Additional TechCorp Solutions users
   {
@@ -363,6 +403,8 @@ export const clientsData = [
     csat: 4,
     feedback: 'Great tool overall. The trend charts are very helpful for our quarterly reviews.',
     date: '2024-03-11T14:15:00Z',
+    region: 'na',
+    subregion: 'us-west',
   },
   {
     id: 10,
@@ -378,6 +420,8 @@ export const clientsData = [
     csat: 5,
     feedback: 'Exactly what we needed for tracking satisfaction at scale. Exceptional product.',
     date: '2024-03-12T09:00:00Z',
+    region: 'na',
+    subregion: 'us-west',
   },
   {
     id: 11,
@@ -393,6 +437,8 @@ export const clientsData = [
     csat: null,
     feedback: null,
     date: '2024-03-13T08:00:00Z',
+    region: 'na',
+    subregion: 'us-west',
   },
   // Additional Global Bank Ltd users
   {
@@ -409,6 +455,8 @@ export const clientsData = [
     csat: 3,
     feedback: 'Decent platform but onboarding took longer than expected for our team.',
     date: '2024-02-21T11:05:00Z',
+    region: 'emea',
+    subregion: 'uk-ie',
   },
   {
     id: 13,
@@ -424,6 +472,8 @@ export const clientsData = [
     csat: 4,
     feedback: 'Very useful for campaign tracking. Would love better bulk export options.',
     date: '2024-02-22T16:30:00Z',
+    region: 'emea',
+    subregion: 'uk-ie',
   },
   {
     id: 14,
@@ -439,6 +489,8 @@ export const clientsData = [
     csat: null,
     feedback: null,
     date: '2024-03-14T10:00:00Z',
+    region: 'emea',
+    subregion: 'uk-ie',
   },
   // Additional Creative Studio users
   {
@@ -455,6 +507,8 @@ export const clientsData = [
     csat: 5,
     feedback: 'The visual analytics dashboard is a game changer for our client presentations.',
     date: '2024-02-06T10:20:00Z',
+    region: 'emea',
+    subregion: 'eu',
   },
   {
     id: 16,
@@ -470,6 +524,8 @@ export const clientsData = [
     csat: 4,
     feedback: 'Solid tool. The automated survey flows save us a lot of manual work each week.',
     date: '2024-02-08T13:00:00Z',
+    region: 'emea',
+    subregion: 'eu',
   },
   {
     id: 17,
@@ -485,6 +541,8 @@ export const clientsData = [
     csat: null,
     feedback: null,
     date: '2024-03-09T15:30:00Z',
+    region: 'emea',
+    subregion: 'eu',
   },
   // Additional Innovate Co. users
   {
@@ -501,6 +559,8 @@ export const clientsData = [
     csat: 4,
     feedback: 'Great features. Love how intuitive the dashboard is for our team.',
     date: '2024-03-10T11:20:00Z',
+    region: 'na',
+    subregion: 'us-east',
   },
   {
     id: 19,
@@ -516,6 +576,8 @@ export const clientsData = [
     csat: 5,
     feedback: 'Excellent tool for understanding customer sentiment. Highly recommend!',
     date: '2024-03-11T09:45:00Z',
+    region: 'na',
+    subregion: 'us-east',
   },
   {
     id: 20,
@@ -531,6 +593,8 @@ export const clientsData = [
     csat: null,
     feedback: null,
     date: '2024-03-12T14:00:00Z',
+    region: 'na',
+    subregion: 'us-east',
   },
   // Additional Enterprise Corp users
   {
@@ -547,6 +611,8 @@ export const clientsData = [
     csat: 4,
     feedback: 'Reliable platform with good support. The analytics are comprehensive.',
     date: '2024-03-11T16:00:00Z',
+    region: 'apac',
+    subregion: 'sea',
   },
   {
     id: 22,
@@ -562,6 +628,8 @@ export const clientsData = [
     csat: 4,
     feedback: 'The reporting features are exactly what our executives need for strategizing.',
     date: '2024-03-12T13:25:00Z',
+    region: 'apac',
+    subregion: 'sea',
   },
   {
     id: 23,
@@ -577,6 +645,8 @@ export const clientsData = [
     csat: null,
     feedback: null,
     date: '2024-03-13T10:30:00Z',
+    region: 'apac',
+    subregion: 'sea',
   },
   // Additional Retail Plus users
   {
@@ -593,6 +663,8 @@ export const clientsData = [
     csat: 3,
     feedback: 'Good for tracking but we needed more local language support initially.',
     date: '2024-03-12T12:40:00Z',
+    region: 'emea',
+    subregion: 'mea',
   },
   {
     id: 25,
@@ -608,6 +680,8 @@ export const clientsData = [
     csat: 3,
     feedback: 'Functional but needs performance improvements for our high-volume operations.',
     date: '2024-03-13T14:15:00Z',
+    region: 'emea',
+    subregion: 'mea',
   },
   {
     id: 26,
@@ -623,6 +697,8 @@ export const clientsData = [
     csat: null,
     feedback: null,
     date: '2024-03-14T09:00:00Z',
+    region: 'emea',
+    subregion: 'mea',
   },
   // Additional Startup XYZ users
   {
@@ -639,6 +715,8 @@ export const clientsData = [
     csat: 5,
     feedback: 'Perfect for a lean startup. Scalable and easy to integrate into our workflows.',
     date: '2024-03-11T10:50:00Z',
+    region: 'emea',
+    subregion: 'uk-ie',
   },
   {
     id: 28,
@@ -654,44 +732,46 @@ export const clientsData = [
     csat: 4,
     feedback: 'Great MVP. Looking forward to seeing how this evolves over the next years.',
     date: '2024-03-12T15:30:00Z',
+    region: 'emea',
+    subregion: 'uk-ie',
   },
   // India — Tata CX Solutions
   {
     id: 31, name: 'Arjun Sharma',  email: 'a.sharma@tatacx.in',     company: 'Tata CX Solutions',
     city: 'Mumbai',    country: 'India',     lat: 19.07,  lng:  72.88,
-    status: 'Responded', nps: 8, csat: 4, feedback: 'Powerful analytics suite that scales well with our enterprise needs.', date: '2024-03-14T08:00:00Z',
+    status: 'Responded', nps: 8, csat: 4, feedback: 'Powerful analytics suite that scales well with our enterprise needs.', date: '2024-03-14T08:00:00Z', region: 'apac', subregion: 'india',
   },
   {
     id: 32, name: 'Priya Nair',    email: 'p.nair@tatacx.in',       company: 'Tata CX Solutions',
     city: 'Mumbai',    country: 'India',     lat: 19.07,  lng:  72.88,
-    status: 'Responded', nps: 9, csat: 5, feedback: 'Best-in-class NPS tooling for enterprise use. Very impressed.', date: '2024-03-14T09:30:00Z',
+    status: 'Responded', nps: 9, csat: 5, feedback: 'Best-in-class NPS tooling for enterprise use. Very impressed.', date: '2024-03-14T09:30:00Z', region: 'apac', subregion: 'india',
   },
   {
     id: 33, name: 'Rahul Kapoor',  email: 'r.kapoor@infotrack.in',  company: 'InfoTrack Analytics',
     city: 'Bangalore', country: 'India',     lat: 12.97,  lng:  77.59,
-    status: 'Sent',      nps: null, csat: null, feedback: null, date: '2024-03-15T07:00:00Z',
+    status: 'Sent',      nps: null, csat: null, feedback: null, date: '2024-03-15T07:00:00Z', region: 'apac', subregion: 'india',
   },
   // Australia — Pacific CX Group
   {
     id: 34, name: 'Olivia Chen',   email: 'o.chen@pacificcx.com.au', company: 'Pacific CX Group',
     city: 'Sydney',    country: 'Australia', lat: -33.87, lng: 151.21,
-    status: 'Responded', nps: 9, csat: 5, feedback: 'Excellent platform. The insights dashboard is a game changer for our team.', date: '2024-03-12T01:00:00Z',
+    status: 'Responded', nps: 9, csat: 5, feedback: 'Excellent platform. The insights dashboard is a game changer for our team.', date: '2024-03-12T01:00:00Z', region: 'apac', subregion: 'sea',
   },
   {
     id: 35, name: 'Jack Morrison', email: 'j.morrison@pacificcx.com.au', company: 'Pacific CX Group',
     city: 'Melbourne', country: 'Australia', lat: -37.81, lng: 144.96,
-    status: 'Responded', nps: 8, csat: 4, feedback: 'Very solid reporting and analytics capabilities. Recommend strongly.', date: '2024-03-13T02:30:00Z',
+    status: 'Responded', nps: 8, csat: 4, feedback: 'Very solid reporting and analytics capabilities. Recommend strongly.', date: '2024-03-13T02:30:00Z', region: 'apac', subregion: 'sea',
   },
   // Ukraine — Kyiv Tech Hub
   {
     id: 36, name: 'Olena Kovalenko',    email: 'o.kovalenko@kyivtech.ua', company: 'Kyiv Tech Hub',
     city: 'Kyiv',      country: 'Ukraine',   lat:  50.45, lng:  30.52,
-    status: 'Responded', nps: 7, csat: 4, feedback: 'Good platform with strong analytics. Would love more localization options.', date: '2024-03-10T10:00:00Z',
+    status: 'Responded', nps: 7, csat: 4, feedback: 'Good platform with strong analytics. Would love more localization options.', date: '2024-03-10T10:00:00Z', region: 'emea', subregion: 'eu',
   },
   {
     id: 37, name: 'Mykola Bondarenko',  email: 'm.bondarenko@kyivtech.ua', company: 'Kyiv Tech Hub',
     city: 'Kyiv',      country: 'Ukraine',   lat:  50.45, lng:  30.52,
-    status: 'Pending',   nps: null, csat: null, feedback: null, date: '2024-03-11T11:00:00Z',
+    status: 'Pending',   nps: null, csat: null, feedback: null, date: '2024-03-11T11:00:00Z', region: 'emea', subregion: 'eu',
   },
   // Additional Deutsch Analytics users
   {
@@ -708,6 +788,8 @@ export const clientsData = [
     csat: 4,
     feedback: 'Excellent NPS platform. The integration with our CRM was seamless.',
     date: '2024-03-11T12:00:00Z',
+    region: 'emea',
+    subregion: 'eu',
   },
   {
     id: 30,
@@ -723,6 +805,8 @@ export const clientsData = [
     csat: null,
     feedback: null,
     date: '2024-03-13T11:15:00Z',
+    region: 'emea',
+    subregion: 'eu',
   },
 ]
 

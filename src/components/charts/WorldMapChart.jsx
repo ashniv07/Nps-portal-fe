@@ -1,7 +1,8 @@
 import { useState, useMemo } from 'react'
 import { ComposableMap, Geographies, Geography, Marker, ZoomableGroup } from 'react-simple-maps'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Star, X, MapPin, TrendingUp, Building2, ChevronDown, ChevronUp, Briefcase } from 'lucide-react'
+import { Star, X, MapPin, TrendingUp, Building2, ChevronDown, ChevronUp, Briefcase, ChevronLeft } from 'lucide-react'
+import { regionHierarchy } from '../../data/dummyData'
 
 const GEO_URL = 'https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json'
 
@@ -146,7 +147,7 @@ function LocationPanel({ location, onClose, surveyType }) {
   const [tab, setTab] = useState('clients')
   const [openClient, setOpenClient] = useState(null)
 
-  const { city, country, clients, prospects } = location
+  const { city, country, clients = [], prospects = [] } = location
 
   return (
     <motion.div
@@ -238,195 +239,229 @@ function LocationPanel({ location, onClose, surveyType }) {
 
 // ── Pin SVG ───────────────────────────────────────────────────────────────────
 
-function PinIcon({ color, count, isProspect, isSelected }) {
-  const size = count > 1 ? 16 : 13
+
+// Modern glassy pin with gradient, shadow, and animated pop
+
+// Improved simple pin with styled label
+function PinIcon({ color, label, isSelected }) {
+  const size = 10;
   return (
     <g style={{ cursor: 'pointer' }}>
-      {/* Drop shadow */}
-      <ellipse cx={0} cy={size + 3} rx={5} ry={2.5} fill="rgba(0,0,0,0.18)" />
-      {/* Pin teardrop */}
-      <path
-        d={`M0,${-(size + 3)} C${-size / 1.4},${-(size + 3)} ${-size},${-size} ${-size},${-size / 2}
-            C${-size},${size / 4} 0,${size + 2} 0,${size + 2}
-            C0,${size + 2} ${size},${size / 4} ${size},${-size / 2}
-            C${size},${-size} ${size / 1.4},${-(size + 3)} 0,${-(size + 3)} Z`}
-        fill={isProspect ? '#A78BFA' : color}
-        stroke="white"
-        strokeWidth={isSelected ? 2.5 : 1.5}
-        opacity={isSelected ? 1 : 0.92}
-      />
-      {/* Inner circle / count */}
-      {count > 1 ? (
-        <text
-          y={-(size / 3)}
-          textAnchor="middle"
-          fill="white"
-          fontSize={size * 0.65}
-          fontWeight="bold"
-          fontFamily="system-ui"
-          style={{ pointerEvents: 'none', userSelect: 'none' }}
-        >
-          {count}
-        </text>
-      ) : (
-        <circle cx={0} cy={-(size / 2)} r={size * 0.32} fill="white" opacity={0.85} />
-      )}
-      {/* Selection ring */}
+      {/* Tooltip with name on hover */}
+      {label && <title>{label}</title>}
+      <circle cx={0} cy={0} r={size} fill={color} stroke="#fff" strokeWidth={1.5} opacity={isSelected ? 1 : 0.92} />
       {isSelected && (
-        <circle
-          cx={0} cy={-(size / 2)}
-          r={size * 1.6}
-          fill="none"
-          stroke={isProspect ? '#A78BFA' : color}
-          strokeWidth={1.5}
-          opacity={0.4}
-        />
+        <circle cx={0} cy={0} r={size + 4} fill="none" stroke={color} strokeWidth={1.5} opacity={0.28} />
       )}
     </g>
-  )
+  );
 }
 
 // ── Main WorldMapChart ────────────────────────────────────────────────────────
 
-export function WorldMapChart({ clients = [], prospects = [], surveyType = 'nps', onLocationSelect, selectedLocation }) {
-  const [zoom, setZoom] = useState(1)
-  const [center, setCenter] = useState([15, 20])
 
-  // Group clients by location
-  const clientGroups = useMemo(() => {
-    const map = {}
-    for (const c of clients) {
-      const key = locKey(c.lat, c.lng)
-      if (!map[key]) map[key] = { key, lat: c.lat, lng: c.lng, city: c.city, country: c.country, clients: [] }
-      map[key].clients.push(c)
-    }
-    return Object.values(map)
-  }, [clients])
-
-  // Group prospects by location
-  const prospectGroups = useMemo(() => {
-    const map = {}
-    for (const p of prospects) {
-      const key = locKey(p.lat, p.lng)
-      if (!map[key]) map[key] = { key, lat: p.lat, lng: p.lng, city: p.city, country: p.country, prospects: [] }
-      map[key].prospects.push(p)
-    }
-    return Object.values(map)
-  }, [prospects])
-
-  // Merge: if a prospect location overlaps a client location, merge
-  const allLocations = useMemo(() => {
-    const merged = {}
-    for (const cg of clientGroups) {
-      merged[cg.key] = { ...cg, prospects: [] }
-    }
-    for (const pg of prospectGroups) {
-      if (merged[pg.key]) {
-        merged[pg.key].prospects = pg.prospects
-      } else {
-        merged[pg.key] = { key: pg.key, lat: pg.lat, lng: pg.lng, city: pg.city, country: pg.country, clients: [], prospects: pg.prospects }
-      }
-    }
-    return Object.values(merged)
-  }, [clientGroups, prospectGroups])
-
-  return (
-    <div className="w-full h-full relative bg-[#F0F4F8] overflow-hidden rounded-none">
-      {/* Zoom controls */}
-      <div className="absolute top-3 right-3 z-10 flex flex-col gap-1">
-        <button
-          onClick={() => setZoom(z => Math.min(z * 1.5, 8))}
-          className="w-7 h-7 bg-white rounded-lg shadow border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors flex items-center justify-center text-base font-bold font-body leading-none"
-        >+</button>
-        <button
-          onClick={() => setZoom(z => Math.max(z / 1.5, 1))}
-          className="w-7 h-7 bg-white rounded-lg shadow border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors flex items-center justify-center text-base font-bold font-body leading-none"
-        >−</button>
-      </div>
-
-      <ComposableMap
-        projection="geoNaturalEarth1"
-        style={{ width: '100%', height: '100%' }}
-        projectionConfig={{ scale: 145, center: [15, 10] }}
-      >
-        <ZoomableGroup
-          zoom={zoom}
-          center={center}
-          onMoveEnd={({ zoom: z, coordinates }) => { setZoom(z); setCenter(coordinates) }}
-          minZoom={1}
-          maxZoom={8}
-        >
-          {/* Countries */}
-          <Geographies geography={GEO_URL}>
-            {({ geographies }) =>
-              geographies.map(geo => (
-                <Geography
-                  key={geo.rsmKey}
-                  geography={geo}
-                  fill="#DDE3ED"
-                  stroke="#EEF1F6"
-                  strokeWidth={0.5}
-                  style={{
-                    default: { outline: 'none' },
-                    hover:   { fill: '#CDD5E0', outline: 'none' },
-                    pressed: { outline: 'none' },
-                  }}
-                />
-              ))
-            }
-          </Geographies>
-
-          {/* Pins */}
-          {allLocations.map(loc => {
-            const hasClients = loc.clients?.length > 0
-            const isSelected = selectedLocation?.key === loc.key
-            const pinColor = hasClients
-              ? locationPinColor(loc.clients, surveyType)
-              : '#A78BFA' // prospect-only = purple
-
-            return (
-              <Marker
-                key={loc.key}
-                coordinates={[loc.lng, loc.lat]}
-                onClick={() => onLocationSelect(loc)}
-              >
-                <PinIcon
-                  color={pinColor}
-                  count={hasClients ? loc.clients.length : loc.prospects.length}
-                  isProspect={!hasClients}
-                  isSelected={isSelected}
-                />
-              </Marker>
-            )
-          })}
-        </ZoomableGroup>
-      </ComposableMap>
-    </div>
-  )
-}
 
 // ── Exported panel component (used in AnalyticsTab) ──────────────────────────
 
 export function MapPanel({ clients, prospects, surveyType }) {
   const [selectedLocation, setSelectedLocation] = useState(null)
+  const [drillLevel, setDrillLevel] = useState(0) // 0: regions, 1: subregions, 2: clients
+  const [selectedRegion, setSelectedRegion] = useState(null) // region id
+  const [selectedSubregion, setSelectedSubregion] = useState(null) // subregion id
+  const [zoom, setZoom] = useState(1)
+  const [center, setCenter] = useState([15, 20])
+
+  // Level 0: Aggregated pins for regions
+  const regionPins = useMemo(() => {
+    return regionHierarchy.regions.map(region => {
+      const regionClients = clients.filter(c => c.region === region.id)
+      const responded = regionClients.filter(c => c.status === 'Responded')
+      const avgNps = responded.length > 0 
+        ? Math.round(responded.reduce((s, c) => s + (c.nps || 0), 0) / responded.length)
+        : null
+      return { ...region, clients: regionClients, avgNps, count: regionClients.length }
+    })
+  }, [clients])
+
+  // Level 1: Subregion pins for selected region
+  const subregionPins = useMemo(() => {
+    if (!selectedRegion) return []
+    const subs = regionHierarchy.subregions[selectedRegion] || []
+    return subs.map(sub => {
+      const subClients = clients.filter(c => c.region === selectedRegion && c.subregion === sub.id)
+      const responded = subClients.filter(c => c.status === 'Responded')
+      const avgNps = responded.length > 0 
+        ? Math.round(responded.reduce((s, c) => s + (c.nps || 0), 0) / responded.length)
+        : null
+      return { ...sub, clients: subClients, avgNps, count: subClients.length }
+    })
+  }, [selectedRegion, clients])
+
+  // Level 2: Client locations for selected subregion
+  const clientLocations = useMemo(() => {
+    if (drillLevel !== 2 || !selectedSubregion) return []
+    const subClients = clients.filter(c => c.subregion === selectedSubregion)
+    // Group by city/location
+    const map = {}
+    for (const c of subClients) {
+      const key = `${Math.round(c.lat * 10) / 10}|${Math.round(c.lng * 10) / 10}`
+      if (!map[key]) {
+        map[key] = { key, lat: c.lat, lng: c.lng, city: c.city, country: c.country, clients: [] }
+      }
+      map[key].clients.push(c)
+    }
+    return Object.values(map)
+  }, [selectedSubregion, drillLevel, clients])
+
+  // Determine which pins to show
+  const displayPins = drillLevel === 0 ? regionPins : drillLevel === 1 ? subregionPins : clientLocations
+
+  const handleRegionClick = (region) => {
+    setSelectedRegion(region.id)
+    setDrillLevel(1)
+    setZoom(1.5)
+    setCenter([region.lng, region.lat])
+    setSelectedLocation(null)
+  }
+
+  const handleSubregionClick = (subregion) => {
+    setSelectedSubregion(subregion.id)
+    setDrillLevel(2)
+    setZoom(2.5)
+    setCenter([subregion.lng, subregion.lat])
+    setSelectedLocation(null)
+  }
+
+  const handleBack = () => {
+    if (drillLevel === 2) {
+      setDrillLevel(1)
+      setSelectedSubregion(null)
+      setZoom(1.5)
+      setSelectedLocation(null)
+    } else if (drillLevel === 1) {
+      setDrillLevel(0)
+      setSelectedRegion(null)
+      setZoom(1)
+      setCenter([15, 20])
+      setSelectedLocation(null)
+    }
+  }
 
   return (
     <div className="flex flex-col lg:flex-row min-h-[320px] sm:min-h-[420px] lg:min-h-[500px]">
       {/* Map */}
       <div className="flex-1 bg-[#F0F4F8] relative overflow-hidden min-h-[280px] lg:min-h-0">
-        <WorldMapChart
-          clients={clients}
-          prospects={prospects}
-          surveyType={surveyType}
-          onLocationSelect={setSelectedLocation}
-          selectedLocation={selectedLocation}
-        />
+        <ComposableMap
+          projection="geoNaturalEarth1"
+          style={{ width: '100%', height: '100%' }}
+          projectionConfig={{ scale: 145, center: [15, 10] }}
+        >
+          <ZoomableGroup
+            zoom={zoom}
+            center={center}
+            onMoveEnd={({ zoom: z, coordinates }) => { setZoom(z); setCenter(coordinates) }}
+            minZoom={1}
+            maxZoom={8}
+          >
+            {/* Countries */}
+            <Geographies geography={GEO_URL}>
+              {({ geographies }) =>
+                geographies.map(geo => (
+                  <Geography
+                    key={geo.rsmKey}
+                    geography={geo}
+                    fill="#DDE3ED"
+                    stroke="#EEF1F6"
+                    strokeWidth={0.5}
+                    style={{
+                      default: { outline: 'none' },
+                      hover:   { fill: '#CDD5E0', outline: 'none' },
+                      pressed: { outline: 'none' },
+                    }}
+                  />
+                ))
+              }
+            </Geographies>
+
+            {/* Region/Subregion/Client Pins */}
+            {drillLevel === 0 && regionPins.map(pin => (
+              <Marker
+                key={pin.id}
+                coordinates={[pin.lng, pin.lat]}
+                onClick={() => handleRegionClick(pin)}
+              >
+                <PinIcon
+                  color={pin.color === 'bg-emerald-500' ? '#10B981' : '#F59E0B'}
+                  label={pin.name}
+                  isSelected={false}
+                />
+              </Marker>
+            ))}
+
+            {drillLevel === 1 && subregionPins.map(pin => (
+              <Marker
+                key={pin.id}
+                coordinates={[pin.lng, pin.lat]}
+                onClick={() => handleSubregionClick(pin)}
+              >
+                <PinIcon
+                  color="#3B82F6"
+                  label={pin.name}
+                  isSelected={false}
+                />
+              </Marker>
+            ))}
+
+            {drillLevel === 2 && clientLocations.map(loc => {
+              const hasClients = loc.clients?.length > 0
+              const isSelected = selectedLocation?.key === loc.key
+              const pinColor = hasClients
+                ? locationPinColor(loc.clients, surveyType)
+                : '#A78BFA'
+              return (
+                <Marker
+                  key={loc.key}
+                  coordinates={[loc.lng, loc.lat]}
+                  onClick={() => setSelectedLocation(loc)}
+                >
+                  <PinIcon
+                    color={pinColor}
+                    label={loc.city}
+                    isSelected={isSelected}
+                  />
+                </Marker>
+              )
+            })}
+          </ZoomableGroup>
+        </ComposableMap>
+
+        {/* Back Button */}
+        {drillLevel > 0 && (
+          <button
+            onClick={handleBack}
+            className="absolute top-3 left-3 z-10 w-8 h-8 bg-white rounded-lg shadow border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors flex items-center justify-center"
+          >
+            <ChevronLeft size={16} />
+          </button>
+        )}
+
+        {/* Zoom controls */}
+        <div className="absolute top-3 right-3 z-10 flex flex-col gap-1">
+          <button
+            onClick={() => setZoom(z => Math.min(z * 1.5, 8))}
+            className="w-7 h-7 bg-white rounded-lg shadow border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors flex items-center justify-center text-base font-bold font-body leading-none"
+          >+</button>
+          <button
+            onClick={() => setZoom(z => Math.max(z / 1.5, 1))}
+            className="w-7 h-7 bg-white rounded-lg shadow border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors flex items-center justify-center text-base font-bold font-body leading-none"
+          >−</button>
+        </div>
       </div>
 
       {/* Side panel */}
       <div className="w-full lg:w-80 xl:w-96 bg-white border-t border-l-0 lg:border-t-0 lg:border-l border-gray-100 flex flex-col p-4 sm:p-5 overflow-hidden">
         <AnimatePresence mode="wait">
-          {selectedLocation ? (
+          {selectedLocation && drillLevel === 2 ? (
             <LocationPanel
               key={selectedLocation.key}
               location={selectedLocation}
@@ -445,36 +480,16 @@ export function MapPanel({ clients, prospects, surveyType }) {
                 <MapPin size={22} className="text-gray-400" />
               </div>
               <div>
-                <p className="font-display font-semibold text-gray-400">Select a location</p>
-                <p className="text-xs text-gray-400 font-body mt-1 max-w-[200px]">
-                  Click any pin on the map to view clients and prospects at that location
+                <p className="font-display font-semibold text-gray-400">
+                  {drillLevel === 0 ? 'Select a region' : drillLevel === 1 ? 'Select a subregion' : 'Select a location'}
                 </p>
-              </div>
-              {/* Quick-access chips */}
-              <div className="flex flex-wrap gap-1.5 justify-center mt-2">
-                {clients
-                  .filter((c, i, arr) => arr.findIndex(x => x.city === c.city) === i)
-                  .slice(0, 5)
-                  .map(c => (
-                    <button
-                      key={c.city}
-                      onClick={() => {
-                        // find the location group for this city
-                        const loc = {
-                          key: `${Math.round(c.lat * 10) / 10}|${Math.round(c.lng * 10) / 10}`,
-                          lat: c.lat, lng: c.lng,
-                          city: c.city, country: c.country,
-                          clients: clients.filter(x => x.city === c.city),
-                          prospects: prospects.filter(x => x.city === c.city),
-                        }
-                        setSelectedLocation(loc)
-                      }}
-                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gray-50 hover:bg-gray-100 border border-gray-200 transition-colors text-xs font-body font-medium text-gray-600"
-                    >
-                      <MapPin size={10} className="text-gray-400" />
-                      {c.city}
-                    </button>
-                  ))}
+                <p className="text-xs text-gray-400 font-body mt-1 max-w-[200px]">
+                  {drillLevel === 0 
+                    ? 'Click any region pin to explore' 
+                    : drillLevel === 1 
+                    ? 'Click any subregion pin to view clients'
+                    : 'Click any client pin to view details'}
+                </p>
               </div>
             </motion.div>
           )}

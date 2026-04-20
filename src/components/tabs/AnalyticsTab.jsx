@@ -457,28 +457,43 @@ export function AnalyticsTab({ surveyType = 'nps', onCreateIssue }) {
 
               {/* White bottom */}
               <div className="bg-white px-6 py-4">
-                {/* Animated breakdown bars */}
-                <div className="space-y-2.5">
-                  {[
-                    { label: 'Promoters',  pct: npsData.promoters,  bar: 'bg-emerald-500', tc: 'text-emerald-600' },
-                    { label: 'Passives',   pct: npsData.passives,   bar: 'bg-amber-400',   tc: 'text-amber-500' },
-                    { label: 'Detractors', pct: npsData.detractors, bar: 'bg-rose-500',    tc: 'text-rose-500' },
-                  ].map(({ label, pct, bar, tc }) => (
-                    <div key={label}>
-                      <div className="flex items-center justify-between mb-1">
-                        <span className="text-[11px] font-body font-semibold text-gray-600">{label}</span>
-                        <span className={`text-sm font-bold font-display ${tc}`}>{pct}%</span>
-                      </div>
-                      <div className="h-1.5 rounded-full bg-gray-100">
+                {/* Regional Segmented Performance Bar */}
+                <div className="space-y-3">
+                  <p className="text-[10px] font-body font-semibold text-gray-600 uppercase tracking-wider">Regional Performance</p>
+                  
+                  {/* Horizontal segmented bar */}
+                  <div className="flex gap-0 h-12 rounded-lg overflow-hidden bg-gray-50 border border-gray-100">
+                    {[
+                      { region: 'NA', nps: 75, promoters: 68, passives: 22, detractors: 10 },
+                      { region: 'EMEA', nps: 68, promoters: 58, passives: 32, detractors: 10 },
+                      { region: 'APAC', nps: 72, promoters: 65, passives: 25, detractors: 10 },
+                    ].map((regionData, idx) => {
+                      const npsColor = regionData.nps >= 70 ? 'bg-emerald-500' : regionData.nps >= 60 ? 'bg-amber-400' : 'bg-rose-500'
+                      
+                      return (
                         <motion.div
-                          className={`h-1.5 rounded-full ${bar}`}
-                          initial={{ width: 0 }}
-                          animate={{ width: `${pct}%` }}
-                          transition={{ duration: 0.85, delay: 0.4, ease: 'easeOut' }}
-                        />
-                      </div>
-                    </div>
-                  ))}
+                          key={regionData.region}
+                          className={`flex-1 flex flex-col items-center justify-center text-white font-body font-semibold cursor-pointer group relative ${npsColor} ${idx > 0 ? 'border-l border-gray-100' : ''}`}
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          transition={{ duration: 0.5, delay: idx * 0.1 }}
+                        >
+                          <span className="text-xs">{regionData.region}</span>
+                          <span className="text-lg font-bold">{regionData.nps}</span>
+                          
+                          {/* Tooltip on hover */}
+                          <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-200 z-20">
+                            <div className="bg-gray-900 text-white px-3 py-2.5 rounded-lg text-xs font-body whitespace-nowrap shadow-lg border border-gray-700">
+                              <p className="font-semibold mb-1.5">{regionData.region}</p>
+                              <p className="text-emerald-300">Promoters: {regionData.promoters}%</p>
+                              <p className="text-amber-300">Passives: {regionData.passives}%</p>
+                              <p className="text-rose-300">Detractors: {regionData.detractors}%</p>
+                            </div>
+                          </div>
+                        </motion.div>
+                      )
+                    })}
+                  </div>
                 </div>
 
                 {/* Stats row */}
