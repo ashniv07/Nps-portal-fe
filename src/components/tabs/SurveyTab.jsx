@@ -84,25 +84,64 @@ function SendNowModal({ isOpen, surveyType, clientCount, onConfirm, onClose }) {
   )
 }
 
+// ─── Compact inline file upload ───────────────────────────────────────────────
+function CompactUpload({ label, file, onFile, accept = '.xlsx,.xls,.csv' }) {
+  const ref = useRef(null)
+  return (
+    <div>
+      <input ref={ref} type="file" accept={accept} className="hidden"
+        onChange={e => { const f = e.target.files[0]; onFile(f ? f.name : null); e.target.value = '' }} />
+      {file ? (
+        <div className="flex items-center gap-2 px-3 py-2.5 rounded-[2px] border border-emerald-200 bg-emerald-50">
+          <CheckCircle2 size={13} className="text-emerald-600 shrink-0" />
+          <span className="text-xs text-emerald-700 font-body font-semibold truncate flex-1">{file}</span>
+          <button onClick={() => onFile(null)} className="text-gray-400 hover:text-rose-400 transition-colors">
+            <X size={11} />
+          </button>
+        </div>
+      ) : (
+        <button
+          onClick={() => ref.current?.click()}
+          className="w-full flex items-center gap-2 px-3 py-2.5 rounded-[2px] border border-dashed border-gray-200 hover:border-neon/60 text-xs text-gray-500 font-body hover:bg-neon/[0.04] transition-all"
+        >
+          <Upload size={13} className="shrink-0 text-gray-400" />
+          {label}
+        </button>
+      )}
+    </div>
+  )
+}
+
 // ─── Schedule Panel ───────────────────────────────────────────────────────────
-function SchedulePanel({ globalSurveyType }) {
+function SchedulePanel() {
   const [open, setOpen] = useState(false)
+  const [schedMode, setSchedMode] = useState('nps')   // 'nps' | 'csat'
+  const [npsMode, setNpsMode] = useState('manual')    // 'manual' | 'revenue'
   const [date, setDate] = useState('')
   const [time, setTime] = useState('')
   const [recurrence, setRecurrence] = useState('None')
-  const [schedType, setSchedType] = useState(globalSurveyType)
+  const [topN, setTopN] = useState(50)
+  const [csatFile, setCsatFile] = useState(null)
+  const [revenueFile, setRevenueFile] = useState(null)
   const [scheduled, setScheduled] = useState([
-    { id: 1, type: 'NPS',  date: '2024-04-20', time: '09:00', recurrence: 'Weekly',  status: 'Scheduled' },
-    { id: 2, type: 'CSAT', date: '2024-04-10', time: '10:30', recurrence: 'None',    status: 'Sent' },
-    { id: 3, type: 'Both', date: '2024-04-30', time: '08:00', recurrence: 'Monthly', status: 'Pending' },
+    { id: 1, type: 'NPS',  mode: 'Manual',          date: '2024-04-20', time: '09:00', recurrence: 'Weekly',  status: 'Scheduled' },
+    { id: 2, type: 'CSAT', mode: 'Sheet Upload',     date: '2024-04-10', time: '10:30', recurrence: 'None',    status: 'Sent' },
+    { id: 3, type: 'NPS',  mode: 'Top 30 Accounts',  date: '2024-04-30', time: '08:00', recurrence: 'Monthly', status: 'Pending' },
   ])
 
+  const canAdd = !!(date && time && (
+    schedMode === 'nps' ? (npsMode === 'manual' || revenueFile) : csatFile
+  ))
+
   function addSchedule() {
-    if (!date || !time) return
-    setScheduled((prev) => [
-      ...prev,
-      { id: Date.now(), type: schedType, date, time, recurrence, status: 'Scheduled' },
-    ])
+    if (!canAdd) return
+    const mode = schedMode === 'csat'
+      ? `Sheet: ${csatFile}`
+      : npsMode === 'revenue' ? `Top ${topN} Accounts` : 'Manual'
+    setScheduled(prev => [...prev, {
+      id: Date.now(), type: schedMode.toUpperCase(), mode,
+      date, time, recurrence, status: 'Scheduled',
+    }])
     setDate(''); setTime(''); setRecurrence('None')
   }
 
@@ -114,11 +153,7 @@ function SchedulePanel({ globalSurveyType }) {
 
   return (
     <Card hover={false}>
-      <button
-        type="button"
-        onClick={() => setOpen((p) => !p)}
-        className="w-full"
-      >
+      <button type="button" onClick={() => setOpen(p => !p)} className="w-full">
         <CardHeader>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
@@ -126,19 +161,16 @@ function SchedulePanel({ globalSurveyType }) {
                 <Calendar size={14} className="text-yellow-700" />
               </div>
               <h2 className="font-display font-semibold text-gray-900">Schedule Surveys</h2>
-              {scheduled.filter((s) => s.status === 'Scheduled').length > 0 && (
+              {scheduled.filter(s => s.status === 'Scheduled').length > 0 && (
                 <span className="ml-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-700 font-body">
-                  {scheduled.filter((s) => s.status === 'Scheduled').length} upcoming
+                  {scheduled.filter(s => s.status === 'Scheduled').length} upcoming
                 </span>
               )}
             </div>
-            <ChevronDown
-              size={16}
-              className={`text-gray-400 transition-transform duration-200 ${open ? 'rotate-180' : ''}`}
-            />
+            <ChevronDown size={16} className={`text-gray-400 transition-transform duration-200 ${open ? 'rotate-180' : ''}`} />
           </div>
           <p className="text-xs text-gray-400 font-body mt-1 text-left">
-            Set date, time and recurrence for automated survey delivery
+            NPS: manual schedule or revenue-based targeting · CSAT: sheet-driven delivery
           </p>
         </CardHeader>
       </button>
@@ -153,99 +185,200 @@ function SchedulePanel({ globalSurveyType }) {
             className="overflow-hidden"
           >
             <CardContent className="pt-0 border-t border-gray-50">
-              {/* Schedule form */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 mb-5 pt-5">
-                <div className="col-span-1">
-                  <label className="text-[10px] text-gray-500 font-semibold font-body uppercase tracking-wider block mb-1.5">
-                    Survey Type
-                  </label>
-                  <SurveyTypeSelector value={schedType} onChange={setSchedType} size="sm" />
-                </div>
-                <div>
-                  <label className="text-[10px] text-gray-500 font-semibold font-body uppercase tracking-wider block mb-1.5">
-                    Date
-                  </label>
-                  <input
-                    type="date"
-                    value={date}
-                    onChange={(e) => setDate(e.target.value)}
-                    className="w-full h-[42px] px-3 rounded-[2px] border border-gray-200 text-sm font-body bg-gray-50 focus:outline-none focus:ring-2 focus:ring-neon/30 focus:border-neon/60 transition-all"
-                  />
-                </div>
-                <div>
-                  <label className="text-[10px] text-gray-500 font-semibold font-body uppercase tracking-wider block mb-1.5">
-                    Time
-                  </label>
-                  <div className="relative">
-                    <Clock size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
-                    <input
-                      type="time"
-                      value={time}
-                      onChange={(e) => setTime(e.target.value)}
-                      className="w-full h-[42px] pl-8 pr-3 rounded-[2px] border border-gray-200 text-sm font-body bg-gray-50 focus:outline-none focus:ring-2 focus:ring-neon/30 focus:border-neon/60 transition-all"
-                    />
-                  </div>
-                </div>
-                <div>
-                  <label className="text-[10px] text-gray-500 font-semibold font-body uppercase tracking-wider block mb-1.5">
-                    Recurrence
-                  </label>
-                  <div className="relative">
-                    <RefreshCw size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
-                    <select
-                      value={recurrence}
-                      onChange={(e) => setRecurrence(e.target.value)}
-                      className="w-full h-[42px] pl-8 pr-8 rounded-[2px] border border-gray-200 text-sm font-body bg-gray-50 focus:outline-none focus:ring-2 focus:ring-neon/30 appearance-none cursor-pointer"
-                    >
-                      {RECURRENCE.map((r) => <option key={r} value={r}>{r}</option>)}
-                    </select>
-                    <ChevronDown size={13} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
-                  </div>
-                </div>
-                <div className="flex items-end">
-                  <button
-                    onClick={addSchedule}
-                    disabled={!date || !time}
-                    className="w-full h-[42px] rounded-[2px] bg-gray-900 text-neon text-sm font-semibold font-body hover:bg-gray-800 disabled:opacity-40 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2 uppercase tracking-widest"
-                  >
-                    <Plus size={14} /> Add
-                  </button>
-                </div>
-              </div>
+              <div className="pt-5 space-y-5">
 
-              {/* Scheduled list */}
-              {scheduled.length > 0 ? (
-                <div className="border border-gray-100 rounded-lg overflow-hidden">
-                  <div className="grid grid-cols-[80px_1fr_100px_90px_36px] gap-3 px-4 py-2.5 bg-gray-50 border-b border-gray-100">
-                    {['Type', 'Date & Time', 'Recurrence', 'Status', ''].map((h) => (
-                      <p key={h} className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider font-body">{h}</p>
-                    ))}
-                  </div>
-                  {scheduled.map((s) => (
-                    <div key={s.id} className="grid grid-cols-[80px_1fr_100px_90px_36px] gap-3 px-4 py-3 border-b border-gray-50 last:border-0 items-center hover:bg-gray-50/60 transition-colors">
-                      <span className="text-xs font-bold px-2 py-0.5 rounded bg-neon/20 text-gray-800 font-body w-fit">{s.type}</span>
-                      <span className="text-sm font-body text-gray-700">
-                        {new Date(s.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })} · {s.time}
-                      </span>
-                      <span className="text-sm font-body text-gray-500">{s.recurrence}</span>
-                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded font-body w-fit ${statusColors[s.status] || 'bg-gray-100 text-gray-500'}`}>
-                        {s.status}
-                      </span>
-                      <button
-                        onClick={() => setScheduled((prev) => prev.filter((x) => x.id !== s.id))}
-                        className="p-1.5 rounded hover:bg-gray-100 text-gray-300 hover:text-rose-400 transition-colors"
-                      >
-                        <Trash2 size={12} />
-                      </button>
-                    </div>
+                {/* Survey type tabs */}
+                <div className="flex items-center gap-1 bg-gray-100 rounded-lg p-1 w-fit">
+                  {['nps', 'csat'].map(m => (
+                    <button
+                      key={m}
+                      onClick={() => setSchedMode(m)}
+                      className={`px-5 py-1.5 rounded-md text-xs font-bold font-body transition-all ${
+                        schedMode === m ? 'bg-gray-900 text-neon shadow-sm' : 'text-gray-600 hover:text-gray-800'
+                      }`}
+                    >
+                      {m.toUpperCase()}
+                    </button>
                   ))}
                 </div>
-              ) : (
-                <div className="py-8 text-center border border-dashed border-gray-200 rounded-lg">
-                  <Calendar size={28} className="text-gray-200 mx-auto mb-2" />
-                  <p className="text-sm text-gray-400 font-body">No surveys scheduled yet</p>
-                </div>
-              )}
+
+                {/* ── NPS section ── */}
+                {schedMode === 'nps' && (
+                  <div className="space-y-4">
+                    {/* Method selector */}
+                    <div>
+                      <p className="text-[10px] font-bold font-body uppercase tracking-wider text-gray-400 mb-2">Method</p>
+                      <div className="flex gap-2">
+                        {[
+                          { id: 'manual',  label: 'Manual Schedule' },
+                          { id: 'revenue', label: 'Revenue Report' },
+                        ].map(opt => (
+                          <button
+                            key={opt.id}
+                            onClick={() => setNpsMode(opt.id)}
+                            className={`px-3 py-2 rounded-[2px] border text-xs font-semibold font-body transition-all ${
+                              npsMode === opt.id
+                                ? 'border-gray-900 bg-gray-900 text-neon'
+                                : 'border-gray-200 text-gray-600 hover:border-gray-400 hover:bg-gray-50'
+                            }`}
+                          >
+                            {opt.label}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Revenue report options */}
+                    {npsMode === 'revenue' && (
+                      <div className="p-4 bg-gray-50 rounded-xl space-y-3">
+                        <div>
+                          <p className="text-[10px] font-bold font-body uppercase tracking-wider text-gray-400 mb-1.5">Upload Revenue Report</p>
+                          <CompactUpload
+                            label="Upload revenue report (.xlsx, .csv)"
+                            file={revenueFile}
+                            onFile={setRevenueFile}
+                          />
+                        </div>
+                        <div>
+                          <p className="text-[10px] font-bold font-body uppercase tracking-wider text-gray-400 mb-1.5">Target Accounts</p>
+                          <div className="flex items-center gap-2">
+                            <span className="text-xs text-gray-500 font-body whitespace-nowrap">Send to top</span>
+                            <input
+                              type="number"
+                              min={1} max={500}
+                              value={topN}
+                              onChange={e => setTopN(Math.max(1, parseInt(e.target.value) || 1))}
+                              className="w-20 h-9 px-3 rounded-[2px] border border-gray-200 text-sm font-body bg-white focus:outline-none focus:ring-2 focus:ring-neon/30 focus:border-neon/60 transition-all text-center"
+                            />
+                            <span className="text-xs text-gray-500 font-body whitespace-nowrap">accounts by revenue</span>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Date / Time / Recurrence (manual only) / Add */}
+                    <div className={`grid gap-3 ${npsMode === 'manual' ? 'grid-cols-1 sm:grid-cols-4' : 'grid-cols-1 sm:grid-cols-3'}`}>
+                      <div>
+                        <label className="text-[10px] text-gray-500 font-semibold font-body uppercase tracking-wider block mb-1.5">Date</label>
+                        <input type="date" value={date} onChange={e => setDate(e.target.value)}
+                          className="w-full h-[42px] px-3 rounded-[2px] border border-gray-200 text-sm font-body bg-gray-50 focus:outline-none focus:ring-2 focus:ring-neon/30 focus:border-neon/60 transition-all" />
+                      </div>
+                      <div>
+                        <label className="text-[10px] text-gray-500 font-semibold font-body uppercase tracking-wider block mb-1.5">Time</label>
+                        <div className="relative">
+                          <Clock size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+                          <input type="time" value={time} onChange={e => setTime(e.target.value)}
+                            className="w-full h-[42px] pl-8 pr-3 rounded-[2px] border border-gray-200 text-sm font-body bg-gray-50 focus:outline-none focus:ring-2 focus:ring-neon/30 focus:border-neon/60 transition-all" />
+                        </div>
+                      </div>
+                      {npsMode === 'manual' && (
+                        <div>
+                          <label className="text-[10px] text-gray-500 font-semibold font-body uppercase tracking-wider block mb-1.5">Recurrence</label>
+                          <div className="relative">
+                            <RefreshCw size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+                            <select value={recurrence} onChange={e => setRecurrence(e.target.value)}
+                              className="w-full h-[42px] pl-8 pr-8 rounded-[2px] border border-gray-200 text-sm font-body bg-gray-50 focus:outline-none focus:ring-2 focus:ring-neon/30 appearance-none cursor-pointer">
+                              {RECURRENCE.map(r => <option key={r} value={r}>{r}</option>)}
+                            </select>
+                            <ChevronDown size={13} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+                          </div>
+                        </div>
+                      )}
+                      <div className="flex items-end">
+                        <button onClick={addSchedule} disabled={!canAdd}
+                          className="w-full h-[42px] rounded-[2px] bg-gray-900 text-neon text-sm font-semibold font-body hover:bg-gray-800 disabled:opacity-40 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2 uppercase tracking-widest">
+                          <Plus size={14} /> Add
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* ── CSAT section ── */}
+                {schedMode === 'csat' && (
+                  <div className="space-y-4">
+                    <div className="p-4 bg-gray-50 rounded-xl space-y-2">
+                      <p className="text-[10px] font-bold font-body uppercase tracking-wider text-gray-400 mb-1.5">Client Sheet</p>
+                      <CompactUpload
+                        label="Upload client sheet (.xlsx, .csv) — survey recipients auto-detected"
+                        file={csatFile}
+                        onFile={setCsatFile}
+                      />
+                      {csatFile && (
+                        <p className="text-[10px] text-emerald-600 font-body pt-0.5">
+                          Recipients detected from sheet. Set schedule below.
+                        </p>
+                      )}
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
+                      <div>
+                        <label className="text-[10px] text-gray-500 font-semibold font-body uppercase tracking-wider block mb-1.5">Date</label>
+                        <input type="date" value={date} onChange={e => setDate(e.target.value)}
+                          className="w-full h-[42px] px-3 rounded-[2px] border border-gray-200 text-sm font-body bg-gray-50 focus:outline-none focus:ring-2 focus:ring-neon/30 focus:border-neon/60 transition-all" />
+                      </div>
+                      <div>
+                        <label className="text-[10px] text-gray-500 font-semibold font-body uppercase tracking-wider block mb-1.5">Time</label>
+                        <div className="relative">
+                          <Clock size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+                          <input type="time" value={time} onChange={e => setTime(e.target.value)}
+                            className="w-full h-[42px] pl-8 pr-3 rounded-[2px] border border-gray-200 text-sm font-body bg-gray-50 focus:outline-none focus:ring-2 focus:ring-neon/30 focus:border-neon/60 transition-all" />
+                        </div>
+                      </div>
+                      <div>
+                        <label className="text-[10px] text-gray-500 font-semibold font-body uppercase tracking-wider block mb-1.5">Recurrence</label>
+                        <div className="relative">
+                          <RefreshCw size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+                          <select value={recurrence} onChange={e => setRecurrence(e.target.value)}
+                            className="w-full h-[42px] pl-8 pr-8 rounded-[2px] border border-gray-200 text-sm font-body bg-gray-50 focus:outline-none focus:ring-2 focus:ring-neon/30 appearance-none cursor-pointer">
+                            {RECURRENCE.map(r => <option key={r} value={r}>{r}</option>)}
+                          </select>
+                          <ChevronDown size={13} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+                        </div>
+                      </div>
+                      <div className="flex items-end">
+                        <button onClick={addSchedule} disabled={!canAdd}
+                          className="w-full h-[42px] rounded-[2px] bg-gray-900 text-neon text-sm font-semibold font-body hover:bg-gray-800 disabled:opacity-40 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2 uppercase tracking-widest">
+                          <Plus size={14} /> Add
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Scheduled list */}
+                {scheduled.length > 0 ? (
+                  <div className="border border-gray-100 rounded-lg overflow-hidden">
+                    <div className="grid grid-cols-[60px_minmax(0,1fr)_minmax(0,1.5fr)_90px_80px_36px] gap-3 px-4 py-2.5 bg-gray-50 border-b border-gray-100">
+                      {['Type', 'Method', 'Date & Time', 'Recurrence', 'Status', ''].map(h => (
+                        <p key={h} className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider font-body">{h}</p>
+                      ))}
+                    </div>
+                    {scheduled.map(s => (
+                      <div key={s.id} className="grid grid-cols-[60px_minmax(0,1fr)_minmax(0,1.5fr)_90px_80px_36px] gap-3 px-4 py-3 border-b border-gray-50 last:border-0 items-center hover:bg-gray-50/60 transition-colors">
+                        <span className="text-xs font-bold px-2 py-0.5 rounded bg-neon/20 text-gray-800 font-body w-fit">{s.type}</span>
+                        <span className="text-xs text-gray-500 font-body truncate">{s.mode}</span>
+                        <span className="text-sm font-body text-gray-700">
+                          {new Date(s.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })} · {s.time}
+                        </span>
+                        <span className="text-sm font-body text-gray-500">{s.recurrence}</span>
+                        <span className={`text-[10px] font-bold px-2 py-0.5 rounded font-body w-fit ${statusColors[s.status] || 'bg-gray-100 text-gray-500'}`}>
+                          {s.status}
+                        </span>
+                        <button onClick={() => setScheduled(prev => prev.filter(x => x.id !== s.id))}
+                          className="p-1.5 rounded hover:bg-gray-100 text-gray-300 hover:text-rose-400 transition-colors">
+                          <Trash2 size={12} />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="py-8 text-center border border-dashed border-gray-200 rounded-lg">
+                    <Calendar size={28} className="text-gray-200 mx-auto mb-2" />
+                    <p className="text-sm text-gray-400 font-body">No surveys scheduled yet</p>
+                  </div>
+                )}
+              </div>
             </CardContent>
           </motion.div>
         )}
@@ -622,7 +755,7 @@ export function SurveyTab({ surveyType: defaultType = 'nps' }) {
 
         {/* ── Schedule Panel ─────────────────────────────────────── */}
         <motion.div variants={item}>
-          <SchedulePanel globalSurveyType={globalSurveyType} />
+          <SchedulePanel />
         </motion.div>
 
         {/* ── Client List (Grouped by Company) ────────────────────────────────────────── */}

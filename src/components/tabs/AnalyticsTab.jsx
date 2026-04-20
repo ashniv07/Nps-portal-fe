@@ -457,40 +457,23 @@ export function AnalyticsTab({ surveyType = 'nps', onCreateIssue }) {
 
               {/* White bottom */}
               <div className="bg-white px-6 py-4">
-                {/* Regional Segmented Performance Bar */}
-                <div className="space-y-3">
+                {/* Regional Performance Cards */}
+                <div className="space-y-2">
                   <p className="text-[10px] font-body font-semibold text-gray-600 uppercase tracking-wider">Regional Performance</p>
-                  
-                  {/* Horizontal segmented bar */}
-                  <div className="flex gap-0 h-12 rounded-lg overflow-hidden bg-gray-50 border border-gray-100">
+                  <div className="grid grid-cols-3 gap-2">
                     {[
-                      { region: 'NA', nps: 75, promoters: 68, passives: 22, detractors: 10 },
-                      { region: 'EMEA', nps: 68, promoters: 58, passives: 32, detractors: 10 },
-                      { region: 'APAC', nps: 72, promoters: 65, passives: 25, detractors: 10 },
-                    ].map((regionData, idx) => {
-                      const npsColor = regionData.nps >= 70 ? 'bg-emerald-500' : regionData.nps >= 60 ? 'bg-amber-400' : 'bg-rose-500'
-                      
+                      { region: 'NA',   label: 'North America', nps: 75, responded: 98,  total: 142 },
+                      { region: 'EMEA', label: 'Europe & MEA',  nps: 68, responded: 61,  total: 98  },
+                      { region: 'APAC', label: 'Asia Pacific',  nps: 72, responded: 49,  total: 72  },
+                    ].map((r) => {
+                      const scoreColor  = r.nps >= 70 ? 'text-emerald-500' : r.nps >= 60 ? 'text-amber-500' : 'text-rose-500'
+                      const borderColor = r.nps >= 70 ? 'border-l-emerald-500' : r.nps >= 60 ? 'border-l-amber-400' : 'border-l-rose-500'
                       return (
-                        <motion.div
-                          key={regionData.region}
-                          className={`flex-1 flex flex-col items-center justify-center text-white font-body font-semibold cursor-pointer group relative ${npsColor} ${idx > 0 ? 'border-l border-gray-100' : ''}`}
-                          initial={{ opacity: 0 }}
-                          animate={{ opacity: 1 }}
-                          transition={{ duration: 0.5, delay: idx * 0.1 }}
-                        >
-                          <span className="text-xs">{regionData.region}</span>
-                          <span className="text-lg font-bold">{regionData.nps}</span>
-                          
-                          {/* Tooltip on hover */}
-                          <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-200 z-20">
-                            <div className="bg-gray-900 text-white px-3 py-2.5 rounded-lg text-xs font-body whitespace-nowrap shadow-lg border border-gray-700">
-                              <p className="font-semibold mb-1.5">{regionData.region}</p>
-                              <p className="text-emerald-300">Promoters: {regionData.promoters}%</p>
-                              <p className="text-amber-300">Passives: {regionData.passives}%</p>
-                              <p className="text-rose-300">Detractors: {regionData.detractors}%</p>
-                            </div>
-                          </div>
-                        </motion.div>
+                        <div key={r.region} className={`border border-gray-100 border-l-4 ${borderColor} rounded-xl p-3 bg-white`}>
+                          <p className="text-[10px] font-bold font-body text-gray-500 uppercase tracking-wider mb-1">{r.region}</p>
+                          <p className={`text-2xl font-bold font-display leading-none ${scoreColor}`}>{r.nps}</p>
+                          <p className="text-[9px] text-gray-400 font-body mt-2">{r.responded}/{r.total} responded</p>
+                        </div>
                       )
                     })}
                   </div>
